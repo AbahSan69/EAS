@@ -1,0 +1,1 @@
+<script src="{{ asset('oneui/js/oneui.app.min.js') }}"></script>
