@@ -19,11 +19,11 @@
               <p class="mt-2 mb-0 fw-medium">{{ Auth::user()->name }}</p>
               <p class="mb-0 text-muted fs-sm fw-medium">{{ Auth::user()->role->nama }}</p>
             </div>
-            <div class="p-2">
+            {{-- <div class="p-2">
               <a class="dropdown-item d-flex align-items-center justify-content-between" href="be_pages_generic_profile.html">
                 <span class="fs-sm fw-medium">Profil</span>
               </a>
-            </div>
+            </div> --}}
             <div role="separator" class="dropdown-divider m-0"></div>
             <div class="p-2">
               <form action="{{ route('logout') }}" method="POST">

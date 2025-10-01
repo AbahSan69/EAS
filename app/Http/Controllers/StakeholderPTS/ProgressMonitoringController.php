@@ -5,6 +5,10 @@ namespace App\Http\Controllers\StakeholderPTS;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pts;
+use App\Models\SPInformasi;
+use App\Models\SPAplikasi;
+use App\Models\SPTeknologi;
+use App\Models\SPKeamanan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +50,10 @@ class ProgressMonitoringController extends Controller
     public function index($id)
     {
         $pts = Pts::findOrFail($id);
-        return view('stakeholder_pts.progress.index', compact('pts'));
+        $informasi = SPInformasi::all();
+        $aplikasi = SPAplikasi::all();
+        $teknologi = SPTeknologi::all();
+        $keamanan = SPKeamanan::all();
+        return view('stakeholder_pts.progress.index', compact('pts', 'informasi', 'aplikasi', 'teknologi', 'keamanan'));
     }
 }

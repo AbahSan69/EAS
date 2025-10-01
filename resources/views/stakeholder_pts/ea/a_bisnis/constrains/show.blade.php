@@ -95,16 +95,20 @@
                               {{ $list_constrain->title }}
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @if ($list_constrain->content)
-                                {{ $list_constrain->content }}
+                              @if ($list_constrain->latestHistory->content)
+                                {{ $list_constrain->latestHistory->content }}
                               @else
                                 <span class="fw-semibold fs-sm">Tidak ada text</span>
                               @endif
                             </td>
                             <td>
-                              @if($list_constrain->image)
+                              @if($list_constrain->latestHistory->image)
                                 <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_constrain->id }}">
-                                  <img src="{{ asset('storage/'.$list_constrain->image) }}" 
+                                  {{-- <img src="{{ asset('storage/'.$list_constrain->image) }}" 
+                                  alt="gambar" 
+                                  width="80" 
+                                  class="img-thumbnail"> --}}
+                                  <img src="{{ asset($list_constrain->latestHistory->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail">
@@ -115,20 +119,20 @@
                               @endif
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @switch($list_constrain->status)
+                              @switch($list_constrain->latestHistory->status)
                                 @case('Proses')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                                    {{ $list_constrain->status }}
+                                    {{ $list_constrain->latestHistory->status }}
                                   </span>
                                 @break
                                 @case('Selesai')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                                    {{ $list_constrain->status }}
+                                    {{ $list_constrain->latestHistory->status }}
                                   </span>
                                 @break
                                 @default
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                                    {{ $list_constrain->status }}
+                                    {{ $list_constrain->latestHistory->status }}
                                   </span>
                               @endswitch
                             </td>
@@ -156,7 +160,8 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                           <div class="modal-content">
                             <div class="modal-body text-center">
-                              <img src="{{ asset('storage/'.$list_constrain->image) }}" class="img-fluid" alt="gambar detail">
+                              {{-- <img src="{{ asset('storage/'.$list_constrain->image) }}" class="img-fluid" alt="gambar detail"> --}}
+                              <img src="{{ asset($list_constrain->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                             </div>
                           </div>
                         </div>

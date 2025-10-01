@@ -48,7 +48,7 @@
                                                 {{ $list_vision->judul }}
                                             </td>
                                             <td class="fw-semibold fs-sm">
-                                                {{ $list_vision->deskripsi }}
+                                              {{ $vision->latestHistory->content ?? '-' }}
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group">

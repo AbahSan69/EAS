@@ -104,7 +104,11 @@
                             <td>
                               @if($list_accountability->image)
                                 <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_accountability->id }}">
-                                  <img src="{{ asset('storage/'.$list_accountability->image) }}" 
+                                  {{-- <img src="{{ asset('storage/'.$list_accountability->image) }}" 
+                                  alt="gambar" 
+                                  width="80" 
+                                  class="img-thumbnail"> --}}
+                                  <img src="{{ asset($list_accountability->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail">
@@ -156,7 +160,8 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                           <div class="modal-content">
                             <div class="modal-body text-center">
-                              <img src="{{ asset('storage/'.$list_accountability->image) }}" class="img-fluid" alt="gambar detail">
+                              {{-- <img src="{{ asset('storage/'.$list_accountability->image) }}" class="img-fluid" alt="gambar detail"> --}}
+                              <img src="{{ asset($list_accountability->image) }}" class="img-fluid" alt="gambar detail">
                             </div>
                           </div>
                         </div>

@@ -95,16 +95,20 @@
                               {{ $list_risk->title }}
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @if ($list_risk->content)
-                                {{ $list_risk->content }}
+                              @if ($list_risk->latestHistory->content)
+                                {{ $list_risk->latestHistory->content }}
                               @else
                                 <span class="fw-semibold fs-sm">Tidak ada text</span>
                               @endif
                             </td>
                             <td>
-                              @if($list_risk->image)
+                              @if($list_risk->latestHistory->image)
                                 <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_risk->id }}">
-                                  <img src="{{ asset('storage/'.$list_risk->image) }}" 
+                                  {{-- <img src="{{ asset('storage/'.$list_risk->image) }}" 
+                                  alt="gambar" 
+                                  width="80" 
+                                  class="img-thumbnail"> --}}
+                                  <img src="{{ asset($list_risk->latestHistory->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail">
@@ -115,20 +119,20 @@
                               @endif
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @switch($list_risk->status)
+                              @switch($list_risk->latestHistory->status)
                                 @case('Proses')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                                    {{ $list_risk->status }}
+                                    {{ $list_risk->latestHistory->status }}
                                   </span>
                                 @break
                                 @case('Selesai')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                                    {{ $list_risk->status }}
+                                    {{ $list_risk->latestHistory->status }}
                                   </span>
                                 @break
                                 @default
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                                    {{ $list_risk->status }}
+                                    {{ $list_risk->latestHistory->status }}
                                   </span>
                               @endswitch
                             </td>
@@ -156,7 +160,8 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                           <div class="modal-content">
                             <div class="modal-body text-center">
-                              <img src="{{ asset('storage/'.$list_risk->image) }}" class="img-fluid" alt="gambar detail">
+                              {{-- <img src="{{ asset('storage/'.$list_risk->image) }}" class="img-fluid" alt="gambar detail"> --}}
+                              <img src="{{ asset($list_risk->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                             </div>
                           </div>
                         </div>

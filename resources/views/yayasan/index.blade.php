@@ -131,7 +131,7 @@
 
         <div class="block block-rounded">
             <div class="block-header block-header-default">
-                <h3 class="block-title">Architecture Vision</h3>
+                <h3 class="block-title">Architecture Other</h3>
             </div>
             <div class="block-content">
     
@@ -140,52 +140,52 @@
                     <div class="col-md-3">
                         <div class="block block-rounded p-3 bg-body-light h-100">
                             <h6 class="fw-bold text-center mb-3">Arsitektur Informasi</h6>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Box 1</span>
-                                    </div>
+                    
+                            @if($informasi->isEmpty())
+                                <p class="text-center text-muted">Data Kosong</p>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.informasi.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Box 2</span>
-                                    </div>
+                            @else
+                                <div class="row g-2">
+                                    @foreach($informasi->take(4) as $item)
+                                        <div class="col-6">
+                                            <div class="block block-rounded p-3 text-center bg-white border">
+                                                <span class="fs-sm">{{ Str::limit($item->title, 15) }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Box 3</span>
-                                    </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.informasi.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 
-                    {{-- Arsitektur Aplikasi --}}
                     <div class="col-md-3">
                         <div class="block block-rounded p-3 bg-body-light h-100">
                             <h6 class="fw-bold text-center mb-3">Arsitektur Aplikasi</h6>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">App 1</span>
-                                    </div>
+                    
+                            @if($aplikasi->isEmpty())
+                                <p class="text-center text-muted">Data Kosong</p>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.aplikasi.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">App 2</span>
-                                    </div>
+                            @else
+                                <div class="row g-2">
+                                    @foreach($aplikasi->take(4) as $item)
+                                        <div class="col-6">
+                                            <div class="block block-rounded p-3 text-center bg-white border">
+                                                <span class="fs-sm">{{ Str::limit($item->title, 15) }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">App 3</span>
-                                    </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.aplikasi.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">App 4</span>
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 
@@ -193,18 +193,26 @@
                     <div class="col-md-3">
                         <div class="block block-rounded p-3 bg-body-light h-100">
                             <h6 class="fw-bold text-center mb-3">Arsitektur Teknologi</h6>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Tech 1</span>
-                                    </div>
+                    
+                            @if($teknologi->isEmpty())
+                                <p class="text-center text-muted">Data Kosong</p>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.teknologi.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Tech 2</span>
-                                    </div>
+                            @else
+                                <div class="row g-2">
+                                    @foreach($teknologi->take(4) as $item)
+                                        <div class="col-6">
+                                            <div class="block block-rounded p-3 text-center bg-white border">
+                                                <span class="fs-sm">{{ Str::limit($item->title, 15) }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.teknologi.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 
@@ -212,18 +220,26 @@
                     <div class="col-md-3">
                         <div class="block block-rounded p-3 bg-body-light h-100">
                             <h6 class="fw-bold text-center mb-3">Arsitektur Keamanan</h6>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Secure 1</span>
-                                    </div>
+                    
+                            @if($keamanan->isEmpty())
+                                <p class="text-center text-muted">Data Kosong</p>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.keamanan.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
                                 </div>
-                                <div class="col-6">
-                                    <div class="block block-rounded p-3 text-center bg-white border">
-                                        <span class="fs-sm">Secure 2</span>
-                                    </div>
+                            @else
+                                <div class="row g-2">
+                                    @foreach($keamanan->take(4) as $item)
+                                        <div class="col-6">
+                                            <div class="block block-rounded p-3 text-center bg-white border">
+                                                <span class="fs-sm">{{ Str::limit($item->title, 15) }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ route('yayasan.keamanan.show', $pts->id) }}" class="btn btn-sm btn-primary">Lihat Detail</a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

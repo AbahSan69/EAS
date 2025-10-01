@@ -25,6 +25,11 @@ use App\Http\Controllers\StakeholderPTS\EA\ABisnis\ProdukController as Stakehold
 use App\Http\Controllers\StakeholderPTS\EA\ABisnis\ConstrainController as StakeholderPTSEABisnisConstrainController;
 use App\Http\Controllers\StakeholderPTS\EA\ABisnis\RiskController as StakeholderPTSEABisnisRiskController;
 
+use App\Http\Controllers\StakeholderPTS\EA\AInformasi\InformasiController as StakeholderPTSEAInformasiController;
+use App\Http\Controllers\StakeholderPTS\EA\AAplikasi\AplikasiController as StakeholderPTSEAAplikasiController;
+use App\Http\Controllers\StakeholderPTS\EA\ATeknologi\TeknologiController as StakeholderPTSEATeknologiController;
+use App\Http\Controllers\StakeholderPTS\EA\AKeamanan\KeamananController as StakeholderPTSEAKeamananController;
+
 //Yayasan
 use App\Http\Controllers\Yayasan\DashboardController as YayasanDashboardController;
 use App\Http\Controllers\Yayasan\Vision\VisiMisiController as YayasanVisionVisiMisiController;
@@ -38,6 +43,10 @@ use App\Http\Controllers\Yayasan\Bisnis\AccountabilityController as YayasanBisni
 use App\Http\Controllers\Yayasan\Bisnis\ProdukController as YayasanBisnisProdukController;
 use App\Http\Controllers\Yayasan\Bisnis\ConstrainController as YayasanBisnisConstrainController;
 use App\Http\Controllers\Yayasan\Bisnis\RiskController as YayasanBisnisRiskController;
+use App\Http\Controllers\Yayasan\Informasi\InformasiController as YayasanInformasiController;
+use App\Http\Controllers\Yayasan\Aplikasi\AplikasiController as YayasanAplikasiController;
+use App\Http\Controllers\Yayasan\Teknologi\TeknologiController as YayasanTeknologiController;
+use App\Http\Controllers\Yayasan\Keamanan\KeamananController as YayasanKeamananController;
 use App\Http\Controllers\Yayasan\ProgressMonitoringController as YayasanProgressMonitoringController;
 use App\Http\Controllers\EA\VisionController;
 use App\Http\Controllers\HomeController;
@@ -149,6 +158,34 @@ Route::middleware(['auth'])->group(function () {
                     Route::get('/delete/{id}', [StakeholderPTSEABisnisRiskController::class, 'delete'])->name('delete');
                 });
             });
+
+            Route::prefix('informasi')->name('informasi.')->group(function () {
+                    Route::get('/show/{id}', [StakeholderPTSEAInformasiController::class, 'show'])->name('show');
+                    Route::post('/save', [StakeholderPTSEAInformasiController::class, 'save'])->name('save');
+                    Route::post('/update', [StakeholderPTSEAInformasiController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [StakeholderPTSEAInformasiController::class, 'delete'])->name('delete');
+            });
+
+            Route::prefix('aplikasi')->name('aplikasi.')->group(function () {
+                Route::get('/show/{id}', [StakeholderPTSEAAplikasiController::class, 'show'])->name('show');
+                Route::post('/save', [StakeholderPTSEAAplikasiController::class, 'save'])->name('save');
+                Route::post('/update', [StakeholderPTSEAAplikasiController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [StakeholderPTSEAAplikasiController::class, 'delete'])->name('delete');
+            });
+
+            Route::prefix('teknologi')->name('teknologi.')->group(function () {
+                Route::get('/show/{id}', [StakeholderPTSEATeknologiController::class, 'show'])->name('show');
+                Route::post('/save', [StakeholderPTSEATeknologiController::class, 'save'])->name('save');
+                Route::post('/update', [StakeholderPTSEATeknologiController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [StakeholderPTSEATeknologiController::class, 'delete'])->name('delete');
+            });
+
+            Route::prefix('keamanan')->name('keamanan.')->group(function () {
+                Route::get('/show/{id}', [StakeholderPTSEAKeamananController::class, 'show'])->name('show');
+                Route::post('/save', [StakeholderPTSEAKeamananController::class, 'save'])->name('save');
+                Route::post('/update', [StakeholderPTSEAKeamananController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [StakeholderPTSEAKeamananController::class, 'delete'])->name('delete');
+            });
             
         });
 
@@ -209,6 +246,26 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/show/{id}', [YayasanBisnisRiskController::class, 'show'])->name('show');
                 Route::post('/save_comment', [YayasanBisnisRiskController::class, 'save_comment'])->name('save_comment');
             });
+        });
+
+        Route::prefix('informasi')->name('informasi.')->group(function () {
+            Route::get('/show/{id}', [YayasanInformasiController::class, 'show'])->name('show');
+            Route::post('/save_comment', [YayasanInformasiController::class, 'save_comment'])->name('save_comment');
+        });
+
+        Route::prefix('aplikasi')->name('aplikasi.')->group(function () {
+            Route::get('/show/{id}', [YayasanAplikasiController::class, 'show'])->name('show');
+            Route::post('/save_comment', [YayasanAplikasiController::class, 'save_comment'])->name('save_comment');
+        });
+
+        Route::prefix('teknologi')->name('teknologi.')->group(function () {
+            Route::get('/show/{id}', [YayasanTeknologiController::class, 'show'])->name('show');
+            Route::post('/save_comment', [YayasanTeknologiController::class, 'save_comment'])->name('save_comment');
+        });
+
+        Route::prefix('keamanan')->name('keamanan.')->group(function () {
+            Route::get('/show/{id}', [YayasanKeamananController::class, 'show'])->name('show');
+            Route::post('/save_comment', [YayasanKeamananController::class, 'save_comment'])->name('save_comment');
         });
 
     });
