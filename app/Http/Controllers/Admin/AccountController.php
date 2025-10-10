@@ -13,12 +13,27 @@ use Exception;
 
 class AccountController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $akun = User::all();
+        // Mulai query
+        $query = User::query();
+
+        // Jika ada pencarian
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $akun = $query->get();
         $role = Role::all();
+
         return view('admin.akun.index', compact('akun', 'role'));
     }
+
 
     public function save_account(Request $request)
     {

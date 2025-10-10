@@ -27,6 +27,7 @@
                   </button>
                 </div>
             </form>
+            <br>
             <div class="block block-rounded">
                 <div class="block-header block-header-default">
                   <h3 class="block-title">List Akun (Total : -) </h3>
@@ -40,7 +41,7 @@
                 <div class="block-content">
                   <div class="table-responsive">
                     <table class="table table-vcenter">
-                      <thead>
+                      <thead>       
                         <tr>
                           <th class="text-center" style="width: 100px;">
                             No
@@ -50,6 +51,7 @@
                           <th class="text-center" style="width: 100px;">Aksi</th>
                         </tr>
                       </thead>
+                      @if ($akun->count() > 0)
                       @php
                         $no = 0;
                       @endphp
@@ -133,6 +135,11 @@
           </div>
 
                                   @endforeach
+                                  @else
+                      <tr>
+                        <td colspan="9" class="text-center text-danger fw-semibold fs-sm">Belum Ada Data atau Data Tidak Ditemukan.</td>
+                      </tr>
+                    @endif
                     </table>
                   </div>
                 </div>

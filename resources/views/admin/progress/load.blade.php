@@ -1,8 +1,9 @@
 @extends('layouts.main')
 @section('content')
+@include('layouts.topbar')
 <main id="main-container" class="flex-grow-1">
     <div class="content content-full py-6">
-        <h1 class="h2 text-center mb-4">BUAT <br> ENTERPRISE ARCHITECTURE</h1>
+        <h1 class="h2 text-center mb-4">LOAD <br> ENTERPRISE ARCHITECTURE</h1>
         <div class="content">
             <div class="row justify-content-center">
               <div class="col-md-8">

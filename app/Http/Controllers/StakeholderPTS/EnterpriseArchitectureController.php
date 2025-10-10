@@ -5,7 +5,7 @@ namespace App\Http\Controllers\StakeholderPTS;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pts;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -20,7 +20,7 @@ class EnterpriseArchitectureController extends Controller
     public function store_pts(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama'      => 'required',
+            'nama'      => 'required|unique:pts,nama',
             'jenis'    => 'required',
         ]);
     
@@ -36,14 +36,6 @@ class EnterpriseArchitectureController extends Controller
                 'nama'    => $request->nama,
                 'jenis' => $request->jenis,
             ]);
-
-            // $pts = DB::table('pts')->insertGetId([
-            //     'user_id'    => Auth::id(),   // otomatis ambil user yang login
-            //     'nama'       => $request->nama,
-            //     'jenis'      => $request->jenis,
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ]);
 
             DB::commit();
 

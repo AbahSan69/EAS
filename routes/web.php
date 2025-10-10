@@ -8,6 +8,24 @@ use App\Http\Controllers\Admin\AccountController as AdminAccountController;
 use App\Http\Controllers\Admin\EnterpriseArchitectureController as AdminEnterpriseArchitectureController;
 use App\Http\Controllers\Admin\EA\VisionController as AdminEAVisionController;
 use App\Http\Controllers\Admin\ProgressMonitoringController as AdminProgressMonitoringController;
+
+use App\Http\Controllers\Admin\EA\AVision\VisiMisiController as AdminEAVisionVisiMisiController;
+use App\Http\Controllers\Admin\EA\AVision\PrincipleController as AdminEAVisionPrincipleController;
+use App\Http\Controllers\Admin\EA\AVision\BisnisController as AdminEAVisionBisnisController;
+use App\Http\Controllers\Admin\EA\AVision\ObjectiveDriverController as AdminEAVisionObjectiveDriverController;
+
+use App\Http\Controllers\Admin\EA\ABisnis\DigitalOrganisasiController as AdminEABisnisDOController;
+use App\Http\Controllers\Admin\EA\ABisnis\BisnisInovasiController as AdminEABisnisInovasiController;
+use App\Http\Controllers\Admin\EA\ABisnis\AccountabilityController as AdminEABisnisAccountabilityController;
+use App\Http\Controllers\Admin\EA\ABisnis\ProdukController as AdminEABisnisProdukController;
+use App\Http\Controllers\Admin\EA\ABisnis\ConstrainController as AdminEABisnisConstrainController;
+use App\Http\Controllers\Admin\EA\ABisnis\RiskController as AdminEABisnisRiskController;
+
+use App\Http\Controllers\Admin\EA\AInformasi\InformasiController as AdminEAInformasiController;
+use App\Http\Controllers\Admin\EA\AAplikasi\AplikasiController as AdminEAAplikasiController;
+use App\Http\Controllers\Admin\EA\ATeknologi\TeknologiController as AdminEATeknologiController;
+use App\Http\Controllers\Admin\EA\AKeamanan\KeamananController as AdminEAKeamananController;
+
 //Stakeholder PTS Controller
 use App\Http\Controllers\StakeholderPTS\DashboardController as StakeholderPTSDashboardController;
 use App\Http\Controllers\StakeholderPTS\EnterpriseArchitectureController as StakeholderPTSEnterpriseArchitectureController;
@@ -49,11 +67,15 @@ use App\Http\Controllers\Yayasan\Teknologi\TeknologiController as YayasanTeknolo
 use App\Http\Controllers\Yayasan\Keamanan\KeamananController as YayasanKeamananController;
 use App\Http\Controllers\Yayasan\ProgressMonitoringController as YayasanProgressMonitoringController;
 use App\Http\Controllers\EA\VisionController;
+use App\Http\Controllers\PerguruanTinggiController;
 use App\Http\Controllers\HomeController;
 
-
-Route::get('/', [AuthController::class, 'halaman_login'])->name('halaman_login');
-Route::post('/', [AuthController::class, 'login'])->name('login');
+Route::get('/', [HomeController::class, 'home'])->name('home');
+Route::get('/api/kampus', [PerguruanTinggiController::class, 'index'])->name('api.kampus');
+Route::get('/register', [AuthController::class, 'halaman_register'])->name('halaman_register');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/login', [AuthController::class, 'halaman_login'])->name('halaman_login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::middleware(['auth'])->group(function () {
     // Dashboard umum
     Route::get('/dashboard', [GlobalDashboardController::class, 'dashboard'])->name('dashboard');
@@ -68,9 +90,105 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('ea')->name('ea.')->group(function () {
             Route::get('/create', [AdminEnterpriseArchitectureController::class, 'create'])->name('create');
             Route::post('/store_pts', [AdminEnterpriseArchitectureController::class, 'store_pts'])->name('store_pts');
+            Route::get('/delete_pts/{id}', [AdminEnterpriseArchitectureController::class, 'delete_pts'])->name('delete_pts');
             Route::get('/index/{id}', [AdminEnterpriseArchitectureController::class, 'index'])->name('index');
             Route::prefix('vision')->name('vision.')->group(function () {
-                Route::get('/show', [AdminEAVisionController::class, 'show'])->name('show');
+                Route::prefix('visimisi')->name('visimisi.')->group(function () {
+                    Route::get('/show/{id}', [AdminEAVisionVisiMisiController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEAVisionVisiMisiController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEAVisionVisiMisiController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEAVisionVisiMisiController::class, 'delete'])->name('delete');
+                });
+                Route::prefix('principle')->name('principle.')->group(function () {
+                    Route::get('/show/{id}', [AdminEAVisionPrincipleController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEAVisionPrincipleController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEAVisionPrincipleController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEAVisionPrincipleController::class, 'delete'])->name('delete');
+                });
+                Route::prefix('bisnis')->name('bisnis.')->group(function () {
+                    Route::get('/show/{id}', [AdminEAVisionBisnisController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEAVisionBisnisController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEAVisionBisnisController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEAVisionBisnisController::class, 'delete'])->name('delete');
+                });
+                Route::prefix('objective_driver')->name('objective_driver.')->group(function () {
+                    Route::get('/show/{id}', [AdminEAVisionObjectiveDriverController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEAVisionObjectiveDriverController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEAVisionObjectiveDriverController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEAVisionObjectiveDriverController::class, 'delete'])->name('delete');
+                });
+            });
+
+            Route::prefix('bisnis')->name('bisnis.')->group(function () {
+                Route::prefix('do')->name('do.')->group(function () {
+                    Route::get('/show/{id}', [AdminEABisnisDOController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEABisnisDOController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEABisnisDOController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEABisnisDOController::class, 'delete'])->name('delete');
+                });
+
+                Route::prefix('bisnis_inovasi')->name('bisnis_inovasi.')->group(function () {
+                    Route::get('/show/{id}', [AdminEABisnisInovasiController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEABisnisInovasiController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEABisnisInovasiController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEABisnisInovasiController::class, 'delete'])->name('delete');
+                });
+
+                Route::prefix('accountability')->name('accountability.')->group(function () {
+                    Route::get('/show/{id}', [AdminEABisnisAccountabilityController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEABisnisAccountabilityController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEABisnisAccountabilityController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEABisnisAccountabilityController::class, 'delete'])->name('delete');
+                });
+
+                Route::prefix('produk')->name('produk.')->group(function () {
+                    Route::get('/show/{id}', [AdminEABisnisProdukController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEABisnisProdukController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEABisnisProdukController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEABisnisProdukController::class, 'delete'])->name('delete');
+                });
+
+                Route::prefix('constrain')->name('constrain.')->group(function () {
+                    Route::get('/show/{id}', [AdminEABisnisConstrainController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEABisnisConstrainController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEABisnisConstrainController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEABisnisConstrainController::class, 'delete'])->name('delete');
+                });
+
+                Route::prefix('risk')->name('risk.')->group(function () {
+                    Route::get('/show/{id}', [AdminEABisnisRiskController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEABisnisRiskController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEABisnisRiskController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEABisnisRiskController::class, 'delete'])->name('delete');
+                });
+            });
+
+            Route::prefix('informasi')->name('informasi.')->group(function () {
+                    Route::get('/show/{id}', [AdminEAInformasiController::class, 'show'])->name('show');
+                    Route::post('/save', [AdminEAInformasiController::class, 'save'])->name('save');
+                    Route::post('/update', [AdminEAInformasiController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [AdminEAInformasiController::class, 'delete'])->name('delete');
+            });
+
+            Route::prefix('aplikasi')->name('aplikasi.')->group(function () {
+                Route::get('/show/{id}', [AdminEAAplikasiController::class, 'show'])->name('show');
+                Route::post('/save', [AdminEAAplikasiController::class, 'save'])->name('save');
+                Route::post('/update', [AdminEAAplikasiController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [AdminEAAplikasiController::class, 'delete'])->name('delete');
+            });
+
+            Route::prefix('teknologi')->name('teknologi.')->group(function () {
+                Route::get('/show/{id}', [AdminEATeknologiController::class, 'show'])->name('show');
+                Route::post('/save', [AdminEATeknologiController::class, 'save'])->name('save');
+                Route::post('/update', [AdminEATeknologiController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [AdminEATeknologiController::class, 'delete'])->name('delete');
+            });
+
+            Route::prefix('keamanan')->name('keamanan.')->group(function () {
+                Route::get('/show/{id}', [AdminEAKeamananController::class, 'show'])->name('show');
+                Route::post('/save', [AdminEAKeamananController::class, 'save'])->name('save');
+                Route::post('/update', [AdminEAKeamananController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [AdminEAKeamananController::class, 'delete'])->name('delete');
             });
         });
 

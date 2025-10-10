@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Pts;
+use App\Models\StakeholderPTS;
+use App\Models\YayasanPTS;
+use Exception;
 
 class AuthController extends Controller
 {
@@ -50,6 +54,69 @@ class AuthController extends Controller
     
         // Jika login gagal
         return redirect('/')->with('toast_error', 'Nama atau password salah!');
+    }
+
+    public function halaman_register()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username'     => 'required|unique:users,name',
+            'email'    => 'required|email|unique:users,email',
+            // 'pts'      =>'required',
+            // 'jenis_pts' =>'required',
+            'password' => 'required|min:6',
+            'role'  => 'required',
+        ]);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // $pts = Pts::where('nama', $request->pts)->first();
+
+            // if (!$pts) {
+            //     // Jika belum ada, buat baru
+            //     $pts = Pts::create([
+            //         'nama' => $request->pts,
+            //         'jenis' => $request->jenis_pts
+            //     ]);
+            // }
+
+            $user = User::create([
+                'role_id'  => $request->role,
+                'name'     => $request->username,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // // 3️⃣ Insert ke tabel role terkait
+            // if ($request->role === '2') {
+            //     StakeholderPTS::create([
+            //         'user_id' => $user->id,
+            //         'pts_id'  => $pts->id,
+            //     ]);
+            // } elseif ($request->role === '3') {
+            //     YayasanPTS::create([
+            //         'user_id' => $user->id,
+            //         'pts_id'  => $pts->id,
+            //     ]);
+            // }
+
+            DB::commit();
+
+            return redirect()->route('halaman_login')
+                         ->with('toast_success', 'Data berhasil ditambahkan!');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+        }
     }
 
     public function logout(Request $request)

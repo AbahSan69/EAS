@@ -48,7 +48,7 @@
   <div class="content">
           <form action="{{ route('sp.ea.informasi.show', $id_pts) }}" method="GET">
               <div class="input-group mb-4">
-                <input type="text" class="form-control" name="search" placeholder="Cari informasi" value="{{ request()->input('search') }}">
+                <input type="text" class="form-control" name="search" placeholder="Cari Arsitektur Informasi" value="{{ request()->input('search') }}">
                 <!-- Search Icon as Submit Button -->
                 <button class="input-group-text btn btn-primary" type="submit">
                   <i class="fa fa-fw fa-search"></i>
@@ -217,7 +217,7 @@
                                 </div>
                               </div>
                               <div class="block-content fs-sm">
-                                <form class="space-y-4" action="{{ route('sp.ea.informasi.update') }}" method="POST">
+                                <form class="space-y-4" action="{{ route('sp.ea.informasi.update') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                   <input type="hidden" name="id" id="id" value="{{ $list_informasi->id }}">
                                   <div class="row">
@@ -230,11 +230,24 @@
                                       <textarea class="form-control" id="content" name="content" rows="5" placeholder="content ...">{{ $list_informasi->content }}</textarea>
                                     </div>
                                     <div class="mb-4">
+                                      <label class="form-label">Upload Gambar (opsional)</label>
+                                      <input type="file" class="form-control" id="image" name="image" accept=".jpg,.jpeg,.png">
+                                        <small class="text-muted">Format: jpg, png, jpeg | Maks: 2MB</small>
+              
+                                        {{-- Tampilkan gambar lama jika ada --}}
+                                        @if ($list_informasi->latestHistory->image)
+                                        <div class="mt-3">
+                                          <p class="mb-1">Gambar saat ini:</p>
+                                          <img src="{{ asset($list_informasi->latestHistory->image) }}" alt="Gambar Lama" class="img-fluid rounded" style="max-height: 200px;">
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div class="mb-4">
                                       <label for="status" class="form-label">Pilih Status</label>
                                       <select class="form-select" id="status" name="status" required>
                                         <option selected="" disabled>Pilih Status</option>
-                                        <option value="Proses" {{ old('status', $list_informasi->status ?? '') == 'Proses' ? 'selected' : '' }}>Proses</option>
-                                        <option value="Selesai" {{ old('status', $list_informasi->status ?? '') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                                        <option value="Proses" {{ old('status', $list_informasi->latestHistory->status ?? '') == 'Proses' ? 'selected' : '' }}>Proses</option>
+                                        <option value="Selesai" {{ old('status', $list_informasi->latestHistory->status ?? '') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                                       </select>
                                     </div>
                                   </div>
@@ -293,7 +306,7 @@
                         <small class="text-muted">Format: jpg, png, jpeg | Maks: 2MB</small>
                     </div>
                       <div class="mb-4">
-                            <label for="status" class="form-label">Pilih PTS</label>
+                            <label for="status" class="form-label">Pilih Jenis Status</label>
                             <select class="form-select" id="status" name="status" required>
                                 <option selected="" disabled>Pilih Status</option>
                                     <option value="Proses">Proses</option>

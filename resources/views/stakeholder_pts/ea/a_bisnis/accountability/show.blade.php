@@ -48,7 +48,7 @@
   <div class="content">
           <form action="{{ route('sp.ea.bisnis.accountability.show', $id_pts) }}" method="GET">
               <div class="input-group mb-4">
-                <input type="text" class="form-control" name="search" placeholder="Cari accountability" value="{{ request()->input('search') }}">
+                <input type="text" class="form-control" name="search" placeholder="Cari Accountability" value="{{ request()->input('search') }}">
                 <!-- Search Icon as Submit Button -->
                 <button class="input-group-text btn btn-primary" type="submit">
                   <i class="fa fa-fw fa-search"></i>
@@ -102,13 +102,13 @@
                               @endif
                             </td>
                             <td>
-                              @if($list_accountability->image)
+                              @if($list_accountability->latestHistory->image)
                                 <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_accountability->id }}">
                                   {{-- <img src="{{ asset('storage/'.$list_accountability->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail"> --}}
-                                  <img src="{{ asset($list_accountability->image) }}" 
+                                  <img src="{{ asset($list_accountability->latestHistory->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail">
@@ -119,20 +119,20 @@
                               @endif
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @switch($list_accountability->status)
+                              @switch($list_accountability->latestHistory->status)
                                 @case('Proses')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                                    {{ $list_accountability->status }}
+                                    {{ $list_accountability->latestHistory->status }}
                                   </span>
                                 @break
                                 @case('Selesai')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                                    {{ $list_accountability->status }}
+                                    {{ $list_accountability->latestHistory->status }}
                                   </span>
                                 @break
                                 @default
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                                    {{ $list_accountability->status }}
+                                    {{ $list_accountability->latestHistory->status }}
                                   </span>
                               @endswitch
                             </td>
@@ -217,7 +217,7 @@
                                 </div>
                               </div>
                               <div class="block-content fs-sm">
-                                <form class="space-y-4" action="{{ route('sp.ea.bisnis.accountability.update') }}" method="POST">
+                                <form class="space-y-4" action="{{ route('sp.ea.bisnis.accountability.update') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                   <input type="hidden" name="id" id="id" value="{{ $list_accountability->id }}">
                                   <div class="row">
@@ -230,11 +230,24 @@
                                       <textarea class="form-control" id="content" name="content" rows="5" placeholder="content ...">{{ $list_accountability->content }}</textarea>
                                     </div>
                                     <div class="mb-4">
+                                      <label class="form-label">Upload Gambar (opsional)</label>
+                                      <input type="file" class="form-control" id="image" name="image" accept=".jpg,.jpeg,.png">
+                                        <small class="text-muted">Format: jpg, png, jpeg | Maks: 2MB</small>
+              
+                                        {{-- Tampilkan gambar lama jika ada --}}
+                                        @if ($list_accountability->latestHistory->image)
+                                        <div class="mt-3">
+                                          <p class="mb-1">Gambar saat ini:</p>
+                                          <img src="{{ asset($list_accountability->latestHistory->image) }}" alt="Gambar Lama" class="img-fluid rounded" style="max-height: 200px;">
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div class="mb-4">
                                       <label for="status" class="form-label">Pilih Status</label>
                                       <select class="form-select" id="status" name="status" required>
                                         <option selected="" disabled>Pilih Status</option>
-                                        <option value="Proses" {{ old('status', $list_accountability->status ?? '') == 'Proses' ? 'selected' : '' }}>Proses</option>
-                                        <option value="Selesai" {{ old('status', $list_accountability->status ?? '') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                                        <option value="Proses" {{ old('status', $list_accountability->latestHistory->status ?? '') == 'Proses' ? 'selected' : '' }}>Proses</option>
+                                        <option value="Selesai" {{ old('status', $list_accountability->latestHistory->status ?? '') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                                       </select>
                                     </div>
                                   </div>
@@ -293,7 +306,7 @@
                         <small class="text-muted">Format: jpg, png, jpeg | Maks: 2MB</small>
                     </div>
                       <div class="mb-4">
-                            <label for="status" class="form-label">Pilih PTS</label>
+                            <label for="status" class="form-label">Pilih Jenis Status</label>
                             <select class="form-select" id="status" name="status" required>
                                 <option selected="" disabled>Pilih Status</option>
                                     <option value="Proses">Proses</option>
