@@ -91,16 +91,16 @@
                               {{ $list_objective_driver->title }}
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @if ($list_objective_driver->content)
-                                {{ $list_objective_driver->content }}
+                              @if ($list_objective_driver->latestHistory->content)
+                                {{ $list_objective_driver->latestHistory->content }}
                               @else
                                 <span class="fw-semibold fs-sm">Tidak ada text</span>
                               @endif
                             </td>
                             <td>
-                              @if($list_objective_driver->image)
+                              @if($list_objective_driver->latestHistory->image)
                                 <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_objective_driver->id }}">
-                                  <img src="{{ asset('storage/'.$list_objective_driver->image) }}" 
+                                  <img src="{{ asset($list_objective_driver->latestHistory->latestHistory->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail">
@@ -111,20 +111,20 @@
                               @endif
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @switch($list_objective_driver->status)
+                              @switch($list_objective_driver->latestHistory->status)
                                 @case('Proses')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                                    {{ $list_objective_driver->status }}
+                                    {{ $list_objective_driver->latestHistory->status }}
                                   </span>
                                 @break
                                 @case('Selesai')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                                    {{ $list_objective_driver->status }}
+                                    {{ $list_objective_driver->latestHistory->status }}
                                   </span>
                                 @break
                                 @default
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                                    {{ $list_objective_driver->status }}
+                                    {{ $list_objective_driver->latestHistory->status }}
                                   </span>
                               @endswitch
                             </td>
@@ -144,7 +144,7 @@
                   <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                       <div class="modal-body text-center">
-                        <img src="{{ asset('storage/'.$list_objective_driver->image) }}" class="img-fluid" alt="gambar detail">
+                        <img src="{{ asset($list_objective_driver->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                       </div>
                     </div>
                   </div>

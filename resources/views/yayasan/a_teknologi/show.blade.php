@@ -90,16 +90,16 @@
                       {{ $list_teknologi->title }}
                     </td>
                     <td class="fw-semibold fs-sm">
-                      @if ($list_teknologi->content)
-                        {{ $list_teknologi->content }}
+                      @if ($list_teknologi->latestHistory->content)
+                        {{ $list_teknologi->latestHistory->content }}
                       @else
                         <span class="fw-semibold fs-sm">Tidak ada text</span>
                       @endif
                     </td>
                     <td>
-                      @if($list_teknologi->image)
+                      @if($list_teknologi->latestHistory->image)
                         <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_teknologi->id }}">
-                          <img src="{{ asset('storage/'.$list_teknologi->image) }}" 
+                          <img src="{{ asset($list_teknologi->latestHistory->latestHistory->image) }}" 
                           alt="gambar" 
                           width="80" 
                           class="img-thumbnail">
@@ -110,20 +110,20 @@
                       @endif
                     </td>
                     <td class="fw-semibold fs-sm">
-                      @switch($list_teknologi->status)
+                      @switch($list_teknologi->latestHistory->status)
                         @case('Proses')
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                            {{ $list_teknologi->status }}
+                            {{ $list_teknologi->latestHistory->status }}
                           </span>
                         @break
                         @case('Selesai')
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                            {{ $list_teknologi->status }}
+                            {{ $list_teknologi->latestHistory->status }}
                           </span>
                         @break
                         @default
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                            {{ $list_teknologi->status }}
+                            {{ $list_teknologi->latestHistory->status }}
                           </span>
                       @endswitch
                     </td>
@@ -141,7 +141,7 @@
                   <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                       <div class="modal-body text-center">
-                        <img src="{{ asset('storage/'.$list_teknologi->image) }}" class="img-fluid" alt="gambar detail">
+                        <img src="{{ asset($list_teknologi->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                       </div>
                     </div>
                   </div>

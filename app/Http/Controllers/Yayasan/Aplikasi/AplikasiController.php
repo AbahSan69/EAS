@@ -21,15 +21,27 @@ class AplikasiController extends Controller
     {
         $id_pts = $id;
 
-        $query = SPAplikasi::with(['aplikasi_comments.user'])
-                ->where('pts_id', $id_pts);
+        $query = SPAplikasi::with([
+            // ambil history terbaru + user yang update
+            'latestHistory.updatedBy',
+            // ambil semua history kalau mau ditampilkan juga
+            'histories.updatedBy',
+            // ambil komentar + user
+            'aplikasi_comments.user'
+            ])
+            ->where('pts_id', $id_pts);
 
         // Jika ada pencarian
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+
+            $query->where(function ($q) use ($search) {
+                // cari di judul aplikasi
                 $q->where('title', 'like', "%{$search}%")
-                ->orWhere('content', 'like', "%{$search}%");
+                // cari di history (content)
+                ->orWhereHas('histories', function ($qh) use ($search) {
+                  $qh->where('content', 'like', "%{$search}%");
+                });
             });
         }
 

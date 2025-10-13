@@ -91,16 +91,16 @@
                               {{ $list_accountability->title }}
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @if ($list_accountability->content)
-                                {{ $list_accountability->content }}
+                              @if ($list_accountability->latestHistory->content)
+                                {{ $list_accountability->latestHistory->content }}
                               @else
                                 <span class="fw-semibold fs-sm">Tidak ada text</span>
                               @endif
                             </td>
                             <td>
-                              @if($list_accountability->image)
+                              @if($list_accountability->latestHistory->image)
                                 <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_accountability->id }}">
-                                  <img src="{{ asset('storage/'.$list_accountability->image) }}" 
+                                  <img src="{{ asset($list_accountability->latestHistory->latestHistory->image) }}" 
                                   alt="gambar" 
                                   width="80" 
                                   class="img-thumbnail">
@@ -111,20 +111,20 @@
                               @endif
                             </td>
                             <td class="fw-semibold fs-sm">
-                              @switch($list_accountability->status)
+                              @switch($list_accountability->latestHistory->status)
                                 @case('Proses')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                                    {{ $list_accountability->status }}
+                                    {{ $list_accountability->latestHistory->status }}
                                   </span>
                                 @break
                                 @case('Selesai')
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                                    {{ $list_accountability->status }}
+                                    {{ $list_accountability->latestHistory->status }}
                                   </span>
                                 @break
                                 @default
                                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                                    {{ $list_accountability->status }}
+                                    {{ $list_accountability->latestHistory->status }}
                                   </span>
                               @endswitch
                             </td>
@@ -145,7 +145,7 @@
                   <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                       <div class="modal-body text-center">
-                        <img src="{{ asset('storage/'.$list_accountability->image) }}" class="img-fluid" alt="gambar detail">
+                        <img src="{{ asset($list_accountability->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                       </div>
                     </div>
                   </div>

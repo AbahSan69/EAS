@@ -17,17 +17,28 @@ class VisiMisiController extends Controller
     public function show($id, Request $request)
     {
         $id_pts = $id;
-
-        $query = SPVision::with(['vision_comments.user'])
-                ->where('pts_id', $id_pts)
-                ->where('vision_id', 1);
+        $query = SPVision::with([
+            // ambil history terbaru + user yang update
+            'latestHistory.updatedBy',
+            // ambil semua history kalau mau ditampilkan juga
+            'histories.updatedBy',
+            // ambil komentar + user
+            'vision_comments.user'
+            ])
+            ->where('pts_id', $id_pts)
+            ->where('vision_id', 1);
 
         // Jika ada pencarian
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+
+            $query->where(function ($q) use ($search) {
+                // cari di judul vision
                 $q->where('title', 'like', "%{$search}%")
-                ->orWhere('content', 'like', "%{$search}%");
+                // cari di history (content)
+                ->orWhereHas('histories', function ($qh) use ($search) {
+                  $qh->where('content', 'like', "%{$search}%");
+                });
             });
         }
 

@@ -92,7 +92,7 @@
                             {{ $no = $no + 1 }}
                           </td>
                           <td class="fw-semibold fs-sm">
-                              {{ $list_produk->latestHistory->title }}
+                              {{ $list_produk->title }}
                             </td>
                             <td class="fw-semibold fs-sm">
                               @if ($list_produk->latestHistory->content)

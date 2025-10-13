@@ -199,7 +199,7 @@
     </div>
     
 </main>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Get the password and confirmation password fields
     var passwordField = document.getElementById("password");

@@ -90,19 +90,20 @@
                       {{ $list_visimisi->title }}
                     </td>
                     <td class="fw-semibold fs-sm">
-                      @if ($list_visimisi->content)
-                        {{ $list_visimisi->content }}
+                      @if ($list_visimisi->latestHistory->content)
+                        {{ $list_visimisi->latestHistory->content }}
                       @else
                         <span class="fw-semibold fs-sm">Tidak ada text</span>
                       @endif
                     </td>
                     <td>
-                      @if($list_visimisi->image)
+                      @if($list_visimisi->latestHistory->image)
                         <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_visimisi->id }}">
-                          <img src="{{ asset('storage/'.$list_visimisi->image) }}" 
-                          alt="gambar" 
-                          width="80" 
-                          class="img-thumbnail">
+                          <img src="{{ asset($list_visimisi->latestHistory->image) }}" 
+                                  alt="gambar" 
+                                  width="80" 
+                                  class="img-thumbnail">
+                                  <div class="overlay">🔍 Lihat Gambar</div>
                           <div class="overlay">🔍 Lihat Gambar</div>
                         </div>
                       @else
@@ -110,20 +111,20 @@
                       @endif
                     </td>
                     <td class="fw-semibold fs-sm">
-                      @switch($list_visimisi->status)
+                      @switch($list_visimisi->latestHistory->status)
                         @case('Proses')
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                            {{ $list_visimisi->status }}
+                            {{ $list_visimisi->latestHistory->status }}
                           </span>
                         @break
                         @case('Selesai')
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                            {{ $list_visimisi->status }}
+                            {{ $list_visimisi->latestHistory->status }}
                           </span>
                         @break
                         @default
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                            {{ $list_visimisi->status }}
+                            {{ $list_visimisi->latestHistory->status }}
                           </span>
                       @endswitch
                     </td>
@@ -141,7 +142,7 @@
                   <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                       <div class="modal-body text-center">
-                        <img src="{{ asset('storage/'.$list_visimisi->image) }}" class="img-fluid" alt="gambar detail">
+                        <img src="{{ asset($list_visimisi->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                       </div>
                     </div>
                   </div>

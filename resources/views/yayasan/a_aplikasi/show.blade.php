@@ -90,16 +90,16 @@
                       {{ $list_aplikasi->title }}
                     </td>
                     <td class="fw-semibold fs-sm">
-                      @if ($list_aplikasi->content)
-                        {{ $list_aplikasi->content }}
+                      @if ($list_aplikasi->latestHistory->content)
+                        {{ $list_aplikasi->latestHistory->content }}
                       @else
                         <span class="fw-semibold fs-sm">Tidak ada text</span>
                       @endif
                     </td>
                     <td>
-                      @if($list_aplikasi->image)
+                      @if($list_aplikasi->latestHistory->image)
                         <div class="image-preview" data-bs-toggle="modal" data-bs-target="#imageModal-{{ $list_aplikasi->id }}">
-                          <img src="{{ asset('storage/'.$list_aplikasi->image) }}" 
+                          <img src="{{ asset($list_aplikasi->latestHistory->latestHistory->image) }}" 
                           alt="gambar" 
                           width="80" 
                           class="img-thumbnail">
@@ -110,20 +110,20 @@
                       @endif
                     </td>
                     <td class="fw-semibold fs-sm">
-                      @switch($list_aplikasi->status)
+                      @switch($list_aplikasi->latestHistory->status)
                         @case('Proses')
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-primary-light text-dark">
-                            {{ $list_aplikasi->status }}
+                            {{ $list_aplikasi->latestHistory->status }}
                           </span>
                         @break
                         @case('Selesai')
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success">
-                            {{ $list_aplikasi->status }}
+                            {{ $list_aplikasi->latestHistory->status }}
                           </span>
                         @break
                         @default
                           <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-secondary-light text-secondary">
-                            {{ $list_aplikasi->status }}
+                            {{ $list_aplikasi->latestHistory->status }}
                           </span>
                       @endswitch
                     </td>
@@ -141,7 +141,7 @@
                   <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                       <div class="modal-body text-center">
-                        <img src="{{ asset('storage/'.$list_aplikasi->image) }}" class="img-fluid" alt="gambar detail">
+                        <img src="{{ asset($list_aplikasi->latestHistory->image) }}" class="img-fluid" alt="gambar detail">
                       </div>
                     </div>
                   </div>
