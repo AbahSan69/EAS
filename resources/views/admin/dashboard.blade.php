@@ -1,67 +1,97 @@
-@extends('layouts.main')
+@extends('admin.layouts.main')
 @section('content')
-@include('layouts.topbar')
-<main id="main-container" class="flex-grow-1">
-    <div class="bg-image d-flex align-items-center justify-content-center text-center"
-     style="background-image: url('{{ asset('oneui/media/photos/photo36@2x.jpg') }}');
-            min-height: 100vh;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;">
-
-    <!-- Overlay gradasi -->
-    <div style="position: absolute; top:0; left:0; width:100%; height:100%;
-                background: rgba(0,0,0,0.3);"> 
-    </div>
-    <!-- Konten -->
-    <div class="content content-full position-relative">
-        <h1 class="display-4 fw-semibold text-white mb-2">
-          ENTERPRISE ARCHITECTURE SYSTEM
-        </h1>
-        {{-- <p class="fs-4 fw-normal text-white-50 mb-5">
-            Lead paragraph containing a quick description of your product.
-        </p> --}}
-        <div class="row justify-content-center">
-            <!-- Card 1 -->
-            <div class="col-12 col-md-6 col-lg-4 mb-3">
-              <a href="{{ route('admin.ea.create') }}" 
-                 class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4"
-                 style="min-height: 180px;">
-                <i class="fa fa-sitemap fa-3x mb-3"></i>
-                <span class="fw-semibold text-center">
-                  ENTERPRISE <br> ARCHITECTURE
-                </span>
-              </a>
-            </div>
-          
-            <!-- Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4 mb-3">
-              <a href="{{ route('admin.progress.load') }}" 
-                 class="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4"
-                 style="min-height: 180px;">
-                <i class="fa fa-tasks fa-3x mb-3"></i>
-                <span class="fw-semibold text-center">
-                  PROJECT PROGRESS <br> & MONITORING
-                </span>
-              </a>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4 mb-3">
-              <a href="{{ route('admin.account') }}" 
-                 class="btn btn-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4"
-                 style="min-height: 180px;">
-                <i class="fa fa-user fa-3x mb-3"></i>
-                <span class="fw-semibold text-center">
-                  AKUN
-                </span>
-              </a>
-            </div>
+    <main id="main-container">
+      <div class="content">
+        <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
+          <div class="flex-grow-1 mb-1 mb-md-0">
+            <h1 class="h3 fw-bold mb-2">
+              Dashboard
+            </h1>
+            <h2 class="h6 fw-medium fw-medium text-muted mb-0">
+              Selamat Datang, {{ Auth::user()->name }}
+            </h2>
           </div>
           
-    </div>
-</div>
-
-</main>
+        </div>
+      </div>
+      <div class="content">
+        <div class="row items-push">
+          <div class="col-sm-6 col-xxl-3">
+            <div class="block block-rounded d-flex flex-column h-100 mb-0">
+              <div class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
+                <dl class="mb-0">
+                  <dt class="fs-3 fw-bold">32</dt>
+                  <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">Admin</dd>
+                </dl>
+                <div class="item item-rounded-lg bg-body-light">
+                  <i class="far fa-user-circle fs-3 text-primary"></i>
+                </div>
+              </div>
+              <div class="bg-body-light rounded-bottom">
+                <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between" href="javascript:void(0)">
+                  <span>Lihat Semua Admin</span>
+                  <i class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xxl-3">
+            <div class="block block-rounded d-flex flex-column h-100 mb-0">
+              <div class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
+                <dl class="mb-0">
+                  <dt class="fs-3 fw-bold">124</dt>
+                  <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">Dosen</dd>
+                </dl>
+                <div class="item item-rounded-lg bg-body-light">
+                  <i class="far fa-user-circle fs-3 text-primary"></i>
+                </div>
+              </div>
+              <div class="bg-body-light rounded-bottom">
+                <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between" href="javascript:void(0)">
+                  <span>View all customers</span>
+                  <i class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xxl-3">
+            <div class="block block-rounded d-flex flex-column h-100 mb-0">
+              <div class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
+                <dl class="mb-0">
+                  <dt class="fs-3 fw-bold">45</dt>
+                  <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">Siswa</dd>
+                </dl>
+                <div class="item item-rounded-lg bg-body-light">
+                  <i class="far fa-paper-plane fs-3 text-primary"></i>
+                </div>
+              </div>
+              <div class="bg-body-light rounded-bottom">
+                <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between" href="javascript:void(0)">
+                  <span>View all messages</span>
+                  <i class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xxl-3">
+            <div class="block block-rounded d-flex flex-column h-100 mb-0">
+              <div class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
+                <dl class="mb-0">
+                  <dt class="fs-3 fw-bold">4.5%</dt>
+                  <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">Kelas</dd>
+                </dl>
+                <div class="item item-rounded-lg bg-body-light">
+                  <i class="fa fa-chart-bar fs-3 text-primary"></i>
+                </div>
+              </div>
+              <div class="bg-body-light rounded-bottom">
+                <a class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between" href="javascript:void(0)">
+                  <span>View statistics</span>
+                  <i class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        </main>
 @endsection

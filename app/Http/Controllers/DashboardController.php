@@ -8,12 +8,12 @@ class DashboardController extends Controller
     public function dashboard()
     {
         $roleRoutes = [
-            '1' => 'admin.dashboard_admin',
-            '2' => 'sp.dashboard',
-            '3' => 'yayasan.dashboard',
+            'Super Admin' => 'admin.dashboard_admin',
+            'Stakeholder PTS' => 'sp.dashboard',
+            'Yayasan' => 'yayasan.dashboard',
         ];
 
-        $userRole = Auth::user()->role_id;
+        $userRole = Auth::user()->detail_role->role?->name;
 
         // Redirect ke dashboard sesuai role atau tampilkan 403 jika role tidak dikenali
         return isset($roleRoutes[$userRole])

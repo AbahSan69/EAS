@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use App\Models\Pts;
-use App\Models\StakeholderPTS;
-use App\Models\YayasanPTS;
+use Illuminate\Validation\Rule;
+use App\Models\University;
+use App\Models\RoleDetails;
 use Exception;
+use Illuminate\Support\Facades\Log;
+
 
 class AuthController extends Controller
 {
@@ -26,24 +28,21 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'password' => 'required',
-            // 'h-captcha-response' => 'required', // Validasi untuk hCaptcha
         ], [
             'name.required' => 'Field Email atau Username wajib diisi.',
             'password.required' => 'Field Password wajib diisi.',
-            'g-recaptcha-response' => 'required|captcha',
-            // 'h-captcha-response.required' => 'Captcha harus diselesaikan.',
         ]);
     
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
-        $user = DB::table('users')
-                ->where(function ($query) use ($request) {
-                    $query->where('name', $request->name)
-                          ->orWhere('email', $request->name);
+        $user = User::where(function ($query) use ($request) {
+                $query->where('name', $request->name)
+                  ->orWhere('email', $request->name);
                 })
                 ->first();
+
     
         // Jika user ditemukan dan password cocok
         if ($user && Hash::check($request->password, $user->password)) {
@@ -62,62 +61,92 @@ class AuthController extends Controller
     }
 
     public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'username'     => 'required|unique:users,name',
-            'email'    => 'required|email|unique:users,email',
-            // 'pts'      =>'required',
-            // 'jenis_pts' =>'required',
-            'password' => 'required|min:6',
-            'role'  => 'required',
-        ]);
-    
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+{
+    $validator = Validator::make($request->all(), [
+        // --- Bagian 1: Data Organisasi & Unit ---
+        'yayasan_name' => ['required', 'string', 'max:255'],
+        'campus_name' => ['required', 'string', 'max:255', 'unique:universities,name'],
+        'jenis_pts' => ['required', 'string', Rule::in([
+            'Universitas', 'Institut', 'Sekolah Tinggi', 'Politeknik', 'Akademi', 'Akademi Komunitas', 'Lainnya'
+        ])],
+        'campus_code' => ['nullable', 'string', 'max:50'],
+        'campus_year' => ['nullable', 'integer', 'min:1900', 'max:' . date('Y')],
 
-        DB::beginTransaction();
+        // --- Bagian 2: Akun Admin Universitas & Yayasan ---
+        'campus_admin_name' => ['required', 'string', 'max:255'],
+        'campus_admin_email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
 
-        try {
-            // $pts = Pts::where('nama', $request->pts)->first();
+        'yayasan_admin_name' => ['required', 'string', 'max:255'],
+        'yayasan_admin_email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
 
-            // if (!$pts) {
-            //     // Jika belum ada, buat baru
-            //     $pts = Pts::create([
-            //         'nama' => $request->pts,
-            //         'jenis' => $request->jenis_pts
-            //     ]);
-            // }
+        // --- Bagian 3: Password Akses ---
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+        'password_confirmation' => ['required'],
+    ]);
 
-            $user = User::create([
-                'role_id'  => $request->role,
-                'name'     => $request->username,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-
-            // // 3️⃣ Insert ke tabel role terkait
-            // if ($request->role === '2') {
-            //     StakeholderPTS::create([
-            //         'user_id' => $user->id,
-            //         'pts_id'  => $pts->id,
-            //     ]);
-            // } elseif ($request->role === '3') {
-            //     YayasanPTS::create([
-            //         'user_id' => $user->id,
-            //         'pts_id'  => $pts->id,
-            //     ]);
-            // }
-
-            DB::commit();
-
-            return redirect()->route('halaman_login')
-                         ->with('toast_success', 'Data berhasil ditambahkan!');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
-        }
+    if ($validator->fails()) {
+        return redirect('register')->withErrors($validator)->withInput();
     }
+
+    if ($request->campus_admin_email === $request->yayasan_admin_email) {
+        return redirect()->back()->withErrors([
+            'yayasan_admin_email' => 'Email Yayasan tidak boleh sama dengan Admin Universitas.'
+        ])->withInput();
+    }
+
+    DB::beginTransaction();
+
+    try {
+        // Simpan Universitas
+        $university = University::create([
+            'name' => $request->campus_name,
+            'type' => $request->jenis_pts,
+            'code' => $request->campus_code,
+            'estabilished_year' => $request->campus_year,
+        ]);
+
+        // Buat Role Detail
+        $role_detail_admin = RoleDetails::create([
+            'role_id' => 2,
+            'university_id' => $university->id,
+            'name' => 'Admin Universitas',
+            'position' => 'Admin Universitas',
+        ]);
+
+        $role_detail_yayasan = RoleDetails::create([
+            'role_id' => 3,
+            'university_id' => $university->id,
+            'name' => 'Yayasan',
+            'position' => 'Yayasan',
+        ]);
+
+        // Buat Akun Admin Kampus
+        $userAdminKampus = User::create([
+            'role_detail_id' => $role_detail_admin->id,
+            'name' => $request->campus_admin_name,
+            'email' => $request->campus_admin_email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Buat Akun Admin Yayasan
+        $userAdminYayasan = User::create([
+            'role_detail_id' => $role_detail_yayasan->id,
+            'name' => $request->yayasan_admin_name,
+            'email' => $request->yayasan_admin_email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('halaman_login')
+            ->with('toast_success', 'Registrasi berhasil! Silakan login menggunakan akun Anda.');
+    } catch (Exception $e) {
+        DB::rollBack();
+        Log::error('Register gagal: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+    }
+}
+
 
     public function logout(Request $request)
     {

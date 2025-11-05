@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 class Role extends Model
 {
     protected $table = 'roles';
-    protected $fillable = ['nama'];
+    protected $fillable = ['nama','description'];
 
-    public function users()
+    public function detail_role()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(RoleDetails::class);
     }
 }

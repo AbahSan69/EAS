@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id'
+        'role_detail_id'
     ];
 
     /**
@@ -43,8 +43,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function role()
+    public function detail_role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(RoleDetails::class, 'role_detail_id');
     }
+
+    // app/Models/User.php
+
+    public function permissions()
+    {
+        // User memiliki banyak baris di tabel user_permissions
+        return $this->hasMany(UserPermission::class, 'user_id', 'id');
+    }
+
+    public function comments()
+    {
+        // User memiliki banyak baris di tabel user_permissions
+        return $this->hasMany(Comment::class, 'user_id', 'id');
+    }
+
 }

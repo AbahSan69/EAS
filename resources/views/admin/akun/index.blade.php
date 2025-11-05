@@ -1,6 +1,5 @@
-@extends('layouts.main')
+@extends('admin.layouts.main')
 @section('content')
-@include('layouts.topbar')
 <main id="main-container" class="flex-grow-1">
     <div class="bg-body-extra-light">
         <div class="content content-boxed py-3">

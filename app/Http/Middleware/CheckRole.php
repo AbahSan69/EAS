@@ -21,7 +21,7 @@ class CheckRole
         }
 
         // Kalau sudah login tapi role_id tidak cocok → forbidden
-        if (!in_array(Auth::user()->role_id, $roles)) {
+        if (!in_array(Auth::user()->detail_role->role?->name, $roles)) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
