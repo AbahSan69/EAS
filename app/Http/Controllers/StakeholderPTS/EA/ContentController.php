@@ -29,17 +29,17 @@ class ContentController extends Controller
         $userUniversityId = $user->detail_role->university_id;
     
         // 🔹 Ambil semua izin komponen untuk user ini
-        $userPermissions = \App\Models\UserPermission::where('user_id', $user->id)
+        $userPermissions = UserPermission::where('user_id', $user->id)
             ->pluck('component_id')
             ->toArray();
     
         // 🔹 Jika user tidak punya izin spesifik → beri akses penuh
         if (empty($userPermissions)) {
-            $userPermissions = \App\Models\Component::pluck('id')->toArray();
+            $userPermissions = Component::pluck('id')->toArray();
         }
     
         // 🔹 Ambil subdomain lengkap untuk universitas ini
-        $subdomain = \App\Models\Subdomain::with([
+        $subdomain = Subdomain::with([
             'component' => function ($query) use ($userUniversityId) {
                 $query->with(['details' => function ($q) use ($userUniversityId) {
                     $q->where('university_id', $userUniversityId)
@@ -325,7 +325,7 @@ public function deleteComponent($id)
     $component->setRelation('details', $details);
 
     // 3️⃣ Ambil semua izin user untuk komponen ini
-    $permissions = \App\Models\UserPermission::where('user_id', $user->id)
+    $permissions = UserPermission::where('user_id', $user->id)
         ->where('component_id', $component->id)
         ->pluck('access')
         ->toArray();
