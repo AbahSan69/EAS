@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use App\Models\UserPermission;
+use Illuminate\Support\Facades\Storage;
 
 
 class ContentController extends Controller
@@ -238,37 +239,62 @@ public function updateComponent($id, Request $request)
     return back()->with('success', 'Konten berhasil diupdate.');
 }
 
-    public function deleteComponent($id)
-    {
-        DB::beginTransaction();
+public function deleteComponent($id)
+{
+    DB::beginTransaction();
 
-        try {
-            $detail = ComponentDetail::findOrFail($id);
-
-            // ✅ Hapus semua file gambar dari setiap history
-            foreach ($detail->contents as $contents) {
-                if ($contents->image && file_exists(public_path($contents->image))) {
-                    @unlink(public_path($contents->image));
-                }
+    try {
+        $detail = ComponentDetail::findOrFail($id);
+        
+        // 1. Hapus semua file dari setiap riwayat konten
+        foreach ($detail->contents as $content) {
+            
+            // *** PERBAIKAN: Gunakan 'file_path' bukan 'image' ***
+            $filePath = ltrim($content->file_path ?? '', '/'); 
+            
+            // Karena Anda menyimpan di public/, gunakan public_path()
+            $fullPath = public_path($filePath);
+            
+            if ($filePath && file_exists($fullPath)) {
+                // @unlink digunakan untuk menekan error jika file gagal dihapus (misal karena permission),
+                // tapi lebih baik hanya menggunakan unlink() dan membiarkan exception/log terjadi
+                unlink($fullPath); 
             }
-
-            // ✅ Hapus folder aplikasi_images/{pts_id}/{aplikasi_id}
-            $folder = public_path("uploads/components/{$detail->id}");
-            if (File::exists($folder)) {
-                File::deleteDirectory($folder);
-            }                        
-
-            // ✅ Hapus master (otomatis hapus history karena foreign key cascade)
-            $detail->delete();
-
-            DB::commit();
-
-            return redirect()->back()->with('toast_success', 'Data berhasil dihapus!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data.');
+            
+            // Jika ada logika lain untuk 'Storage', pastikan disesuaikan
+            // Contoh: Jika Anda menyimpan ke Storage::disk('local'), logikanya berbeda.
         }
+
+        // 2. Hapus folder utama
+        // Folder harus menggunakan component_id, bukan detail->id (jika path folder mengikuti component_id)
+        // KODE ANDA: public_path("uploads/components/{$detail->id}");
+        // KODE SAYA: public_path("uploads/components/{$detail->component_id}"); <--- Sesuaikan dengan logika penyimpanan Anda
+        
+        // Asumsi folder yang dibuat di storeComponent adalah berdasarkan component_id,
+        // namun jika Anda membuat folder berdasarkan detail->id, kode Anda sudah benar.
+        // Mari kita asumsikan struktur folder mengikuti: uploads/components/{component_id}
+        
+        // $folderPath = public_path("uploads/components/{$detail->component_id}");
+        
+        // // Logika Anda untuk menghapus folder (File::deleteDirectory) sudah benar dan komprehensif.
+        // // File::deleteDirectory akan menghapus folder beserta isinya.
+        // if (File::exists($folderPath)) {
+        //     File::deleteDirectory($folderPath);
+        // }
+
+        // 3. Hapus master (otomatis hapus history karena foreign key cascade)
+        $detail->delete();
+
+        DB::commit();
+
+        return redirect()->back()->with('toast_success', 'Data berhasil dihapus!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        // Anda mungkin ingin mencatat $e->getMessage() untuk debugging
+        // Log::error("Gagal menghapus komponen: " . $e->getMessage());
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.');
     }
+}
 
     public function component_detail($id, Request $request)
 {

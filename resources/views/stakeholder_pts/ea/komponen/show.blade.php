@@ -138,16 +138,17 @@
                                         {{-- 📁 Konten File --}}
                                         @if (in_array($ext, ['jpg', 'jpeg', 'png']))
                                             {{-- 🖼️ Gambar --}}
-                                            <div class="image-preview">
-                                                <img src="{{ asset($path) }}"
-                                                    alt="Preview"
-                                                    class="img-thumbnail"
-                                                    style="max-height:60px; cursor:pointer;"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#imagePreviewModal"
-                                                    data-image="{{ asset($path) }}">
-                                                <div class="overlay">Klik untuk lihat</div>
-                                            </div>
+                                            <div class="image-preview"
+     data-bs-toggle="modal"
+     data-bs-target="#imagePreviewModal"
+     data-image="{{ asset($path) }}">
+    <img src="{{ asset($path) }}"
+         alt="Preview"
+         class="img-thumbnail"
+         style="max-height:60px; cursor:pointer;">
+    <div class="overlay">Klik untuk lihat</div>
+</div>
+
                                         @elseif ($ext === 'pdf')
                                             {{-- 📄 PDF --}}
                                             <button type="button"
@@ -460,7 +461,7 @@
                 kontenWrapper.innerHTML = `
                     <div class="mb-4">
                         <label class="form-label" for="dynamic_file">Upload File</label>
-                        <input type="file" class="form-control" id="dynamic_file" name="file_path" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                        <input type="file" class="form-control" id="dynamic_file" name="file_content" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                         <small class="text-muted">Maksimal 2MB (Format: Gambar, PDF, DOCX)</small>
                         ${filePath ? `
                             <div class="mt-3">
@@ -563,11 +564,11 @@
 
         // Pastikan elemen preview ada
         imgModal?.addEventListener('show.bs.modal', e => {
-            const img = e.relatedTarget.getAttribute('data-image');
-            if(imagePreviewFull && img) {
-                 imagePreviewFull.src = img;
-            }
-        });
+    const trigger = e.relatedTarget || e.target;
+    const img = trigger?.getAttribute('data-image');
+    if (imagePreviewFull && img) imagePreviewFull.src = img;
+});
+
 
         pdfModal?.addEventListener('show.bs.modal', e => {
             const pdf = e.relatedTarget.getAttribute('data-pdf');
