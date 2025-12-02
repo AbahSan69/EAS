@@ -105,12 +105,16 @@
                             <label class="col-sm-4 col-form-label" for="example-hf-email">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" name="email"  placeholder="Masukan email ..." value="{{ $list_akun->email }}" required>
                         </div>
+                        <div class="mb-4">
+                          <label class="col-sm-4 col-form-label" for="example-hf-universitas">Universitas <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="universitas" name="universitas"  placeholder="Masukan Universitas ..." value="{{ $list_akun->detail_role->university_id }}" required>
+                        </div>
                           <div class="mb-4">
                             <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
                             <select id="role_id" name="role_id" class="form-select select-search instructor" required>
                               <option value="" selected disabled>Pilih role</option>
                               @foreach ($role as $list_role)
-                                    <option value="{{ $list_role->id }}" {{ old('role', $list_akun->role_id ?? '') == $list_role->id ? 'selected' : '' }}>{{ $list_role->nama }}</option>
+                                    <option value="{{ $list_role->id }}" {{ old('role', $list_akun->detail_role->role_id ?? '') == $list_role->id ? 'selected' : '' }}>{{ $list_role->name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -171,11 +175,15 @@
                             <input type="email" class="form-control" id="email" name="email"  placeholder="Masukan email ..." required>
                         </div>
                         <div class="mb-4">
+                          <label class="col-sm-4 col-form-label" for="example-hf-universitas">Universitas <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="universitas" name="universitas"  placeholder="Masukan Universitas ..." required>
+                        </div>
+                        <div class="mb-4">
                             <label for="role" class="form-label">Pilih PTS</label>
                             <select class="form-select" id="role_id" name="role_id" required>
                                 <option selected="" disabled>Pilih Role</option>
                                 @foreach ($role as $list_role)
-                                    <option value="{{ $list_role->id }}">{{ $list_role->nama }}</option>
+                                    <option value="{{ $list_role->id }}">{{ $list_role->name }}</option>
                                 @endforeach
                             </select>
                           </div>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\RoleDetails;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -51,6 +52,12 @@ class AccountController extends Controller
         DB::beginTransaction();
 
         try {
+            
+            // RoleDetails::create([
+            //     'role_id' => $request->role_id,
+            //     'university_id' => $request->universitas,
+            // ]);
+
             User::create([
                 'role_id'  => $request->role_id,
                 'name'     => $request->name,

@@ -19,87 +19,183 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use App\Models\UserPermission;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ProgressService;
 
 
 class ContentController extends Controller
 {
+    // public function index($id, Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $userUniversityId = $user->detail_role->university_id;
+    
+    //     // 🔹 Ambil semua izin komponen untuk user ini
+    //     $userPermissions = UserPermission::where('user_id', $user->id)
+    //         ->pluck('component_id')
+    //         ->toArray();
+    
+    //     // 🔹 Jika user tidak punya izin spesifik → beri akses penuh
+    //     if (empty($userPermissions)) {
+    //         $userPermissions = Component::pluck('id')->toArray();
+    //     }
+    
+    //     // 🔹 Ambil subdomain lengkap untuk universitas ini
+    //     $subdomain = Subdomain::with([
+    //         'component' => function ($query) use ($userUniversityId) {
+    //             $query->with(['details' => function ($q) use ($userUniversityId) {
+    //                 $q->where('university_id', $userUniversityId)
+    //                   ->with('contents');
+    //             }]);
+    //         }
+    //     ])->findOrFail($id);
+    
+    //     $totalProgress = 0;
+    //     $componentCount = $subdomain->component->count();
+    
+    //     foreach ($subdomain->component as $component) {
+    //         $details = $component->details;
+    
+    //         if ($details->isNotEmpty()) {
+    //             $detailProgressSum = 0;
+    //             $detailCount = 0;
+    
+    //             foreach ($details as $detail) {
+    //                 // 🔹 Ambil content terbaru untuk detail ini
+    //                 $latestContent = $detail->contents->sortByDesc('created_at')->first();
+    
+    //                 if ($latestContent) {
+    //                     if ($latestContent->status === 'Selesai') {
+    //                         $detailProgress = 100;
+    //                     } elseif ($latestContent->status === 'Proses') {
+    //                         $detailProgress = 50;
+    //                     } else {
+    //                         $detailProgress = 0;
+    //                     }
+    //                 } else {
+    //                     $detailProgress = 0; // Belum ada content
+    //                 }
+    
+    //                 $detailProgressSum += $detailProgress;
+    //                 $detailCount++;
+    //             }
+    
+    //             // 🔹 Hitung rata-rata progress antar detail di komponen
+    //             $component->progress = $detailCount > 0
+    //                 ? round($detailProgressSum / $detailCount, 2)
+    //                 : 0;
+    //         } else {
+    //             $component->progress = 0;
+    //         }
+    
+    //         $totalProgress += $component->progress;
+    //     }
+    
+    //     // 🔹 Hitung rata-rata progress semua komponen
+    //     $subdomainProgress = $componentCount > 0 ? round($totalProgress / $componentCount, 2) : 0;
+    
+    //     return view('stakeholder_pts.ea.index', [
+    //         'subdomain' => $subdomain,
+    //         'subkomponendetail' => $subdomain->component,
+    //         'progress' => $subdomainProgress,
+    //         'userPermissions' => $userPermissions,
+    //     ]);
+    // }
+
     public function index($id, Request $request)
-    {
-        $user = Auth::user();
-        $userUniversityId = $user->detail_role->university_id;
-    
-        // 🔹 Ambil semua izin komponen untuk user ini
-        $userPermissions = UserPermission::where('user_id', $user->id)
-            ->pluck('component_id')
-            ->toArray();
-    
-        // 🔹 Jika user tidak punya izin spesifik → beri akses penuh
-        if (empty($userPermissions)) {
-            $userPermissions = Component::pluck('id')->toArray();
-        }
-    
-        // 🔹 Ambil subdomain lengkap untuk universitas ini
-        $subdomain = Subdomain::with([
-            'component' => function ($query) use ($userUniversityId) {
-                $query->with(['details' => function ($q) use ($userUniversityId) {
-                    $q->where('university_id', $userUniversityId)
-                      ->with('contents');
-                }]);
-            }
-        ])->findOrFail($id);
-    
-        $totalProgress = 0;
-        $componentCount = $subdomain->component->count();
-    
-        foreach ($subdomain->component as $component) {
-            $details = $component->details;
-    
-            if ($details->isNotEmpty()) {
-                $detailProgressSum = 0;
-                $detailCount = 0;
-    
-                foreach ($details as $detail) {
-                    // 🔹 Ambil content terbaru untuk detail ini
-                    $latestContent = $detail->contents->sortByDesc('created_at')->first();
-    
-                    if ($latestContent) {
-                        if ($latestContent->status === 'Selesai') {
-                            $detailProgress = 100;
-                        } elseif ($latestContent->status === 'Proses') {
-                            $detailProgress = 50;
-                        } else {
-                            $detailProgress = 0;
-                        }
-                    } else {
-                        $detailProgress = 0; // Belum ada content
-                    }
-    
-                    $detailProgressSum += $detailProgress;
-                    $detailCount++;
-                }
-    
-                // 🔹 Hitung rata-rata progress antar detail di komponen
-                $component->progress = $detailCount > 0
-                    ? round($detailProgressSum / $detailCount, 2)
-                    : 0;
-            } else {
-                $component->progress = 0;
-            }
-    
-            $totalProgress += $component->progress;
-        }
-    
-        // 🔹 Hitung rata-rata progress semua komponen
-        $subdomainProgress = $componentCount > 0 ? round($totalProgress / $componentCount, 2) : 0;
-    
-        return view('stakeholder_pts.ea.index', [
-            'subdomain' => $subdomain,
-            'subkomponendetail' => $subdomain->component,
-            'progress' => $subdomainProgress,
-            'userPermissions' => $userPermissions,
-        ]);
+{
+    $user = Auth::user();
+    $userUniversityId = $user->detail_role->university_id;
+
+    // 🔹 Ambil semua izin komponen untuk user ini
+    $userPermissions = UserPermission::where('user_id', $user->id)
+        ->pluck('component_id')
+        ->toArray();
+
+    // 🔹 Jika user tidak punya izin spesifik → beri akses penuh
+    if (empty($userPermissions)) {
+        $userPermissions = Component::pluck('id')->toArray();
     }
-    
+
+    // 🔹 Ambil subdomain lengkap untuk universitas ini
+    $subdomain = Subdomain::with([
+        'component' => function ($query) use ($userUniversityId) {
+            $query->with(['details' => function ($q) use ($userUniversityId) {
+                // Filtering Detail berdasarkan university_id
+                $q->where('university_id', $userUniversityId)
+                    ->with('contents'); // Memuat contents untuk cek status
+            }]);
+        }
+    ])->findOrFail($id);
+
+    // Untuk memastikan setiap component punya properti progress (jika diperlukan untuk view)
+    $componentCount = 0;
+    $componentProgressSum = 0;
+
+    // Loop ini akan berjalan HANYA untuk Component yang memiliki Detail 
+    // setelah filtering university_id (misal: 3 Component)
+    foreach ($subdomain->component as $component) {
+        $details = $component->details;
+        
+        $detailProgressSum = 0;
+        $detailCount = 0;
+
+        if ($details->isNotEmpty()) {
+            foreach ($details as $detail) {
+                // 🔹 Ambil content terbaru untuk detail ini
+                $latestContent = $detail->contents->sortByDesc('created_at')->first();
+                $detailProgress = 0;
+                
+                if ($latestContent) {
+                    if ($latestContent->status === 'Selesai') {
+                        $detailProgress = 100;
+                    } elseif ($latestContent->status === 'Proses') {
+                        $detailProgress = 50;
+                    }
+                }
+
+                $detailProgressSum += $detailProgress;
+                $detailCount++;
+            }
+
+            // 🔹 Hitung rata-rata progress antar detail di komponen
+            $component->progress = $detailCount > 0
+                ? round($detailProgressSum / $detailCount, 2)
+                : 0;
+        } else {
+            $component->progress = 0;
+        }
+
+        $componentProgressSum += $component->progress;
+        // $componentCount++ di sini akan menghitung HANYA Component yang ada di Collection $subdomain->component 
+        // yang sudah difilter oleh Eager Loading Details. Inilah sumber masalah 83.33%.
+        $componentCount++; 
+    }
+
+    // --- PERBAIKAN DILAKUKAN DI SINI ---
+
+    // 1. Ambil jumlah TOTAL Component yang seharusnya ada (misalnya: 5)
+    // Ini mengasumsikan semua Component yang dibutuhkan ada di tabel 'components'
+    // dan terhubung ke Subdomain saat ini.
+    $totalRequiredComponents = Component::where('subdomain_id', $id)->count(); 
+
+    // 2. Hitung rata-rata progress menggunakan total Component yang benar sebagai pembagi.
+    // Jika $totalRequiredComponents = 5 dan $componentProgressSum = 250, hasilnya 50.00%.
+    $subdomainProgress = $totalRequiredComponents > 0 
+        ? round($componentProgressSum / $totalRequiredComponents, 2) 
+        : 0;
+
+    // Karena Anda sudah memperbaiki Accessor di model SubDomain, 
+    // Anda juga bisa mengganti seluruh loop di atas dan langsung menggunakan Accessor:
+    // $subdomainProgress = $subdomain->progress; 
+    // *Tetapi* pastikan Accessor SubDomain juga sudah diperbaiki untuk menghitung total Component yang benar.
+
+    return view('stakeholder_pts.ea.index', [
+        'subdomain' => $subdomain,
+        'subkomponendetail' => $subdomain->component,
+        'progress' => $subdomainProgress,
+        'userPermissions' => $userPermissions,
+    ]);
+}
 
 public function storeComponent(Request $request)
 {
@@ -204,13 +300,13 @@ public function updateComponent($id, Request $request)
             break;
 
         case 'File':
-            if ($request->hasFile('file_path')) {
+            if ($request->hasFile('file_content')) {
                 // 1. ADA FILE BARU: Simpan file baru
                 $destinationPath = public_path('uploads/components/' . $request->component_id);
                 if (!file_exists($destinationPath)) {
                     mkdir($destinationPath, 0755, true);
                 }
-                $file = $request->file('file_path');
+                $file = $request->file('file_content');
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $file->move($destinationPath, $fileName);
                 $contentData['file_path'] = 'uploads/components/' . $request->component_id . '/' . $fileName;

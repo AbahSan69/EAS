@@ -20,11 +20,27 @@ class Domain extends Model
      * Aksesor untuk menghitung progress Domain.
      * Mengukur rata-rata progress dari semua Subdomain.
      */
+    // public function getProgressAttribute()
+    // {
+    //     $totalSubdomain = $this->subdomain->count();
+        
+    //     // Pastikan relasi 'subdomain' dimuat
+    //     if ($totalSubdomain == 0) {
+    //         return 0;
+    //     }
+
+    //     // Menjumlahkan nilai 'progress' dari setiap Subdomain (memanggil getProgressAttribute() pada SubDomain)
+    //     $totalProgress = $this->subdomain->sum('progress');
+        
+    //     // Progress Domain adalah rata-rata progress Subdomain
+    //     return round($totalProgress / $totalSubdomain, 2);
+    // }
+
     public function getProgressAttribute()
     {
+        // Pastikan relasi 'subdomain' dimuat
         $totalSubdomain = $this->subdomain->count();
         
-        // Pastikan relasi 'subdomain' dimuat
         if ($totalSubdomain == 0) {
             return 0;
         }
