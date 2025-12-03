@@ -22,12 +22,12 @@
         </li>
         <li class="nav-main-heading">EAS</li>
         <li class="nav-main-item">
-          <a class="nav-main-link" href="{{ route('admin.ea.domain.show') }}">
+          <a class="nav-main-link {{ Request::is('admin/ea/domain/domain') ? 'active' : '' }}" href="{{ route('admin.ea.domain.show') }}">
             <span class="nav-main-link-name">Komponen</span>
           </a>
         </li>
         <li class="nav-main-item">
-          <a class="nav-main-link" href="{{ route('admin.ea.university.show') }}">
+          <a class="nav-main-link {{ Request::is('admin/ea/university/university') ? 'active' : '' }}" href="{{ route('admin.ea.university.show') }}">
             <span class="nav-main-link-name">Universitas</span>
           </a>
         </li>

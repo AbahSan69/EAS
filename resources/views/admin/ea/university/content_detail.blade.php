@@ -15,351 +15,349 @@
           </nav>
         </div>
     </div>
-</main>
 
-<div class="content">
-    <form action="{{ route('sp.ea.component_show', $component->id) }}" method="GET">
-        <div class="input-group mb-4">
-            <input type="text" class="form-control" name="search" placeholder="Cari {{ $component->name ?? 'Data' }}" value="{{ request()->input('search') }}">
-            <button class="input-group-text btn btn-primary" type="submit">
-                <i class="fa fa-fw fa-search"></i>
-            </button>
-        </div>
-    </form>
-
-    <div class="block block-rounded">
-        <div class="block-header block-header-default">
-            <h3 class="block-title">List {{ $component->name ?? 'Data' }}</h3>
-            <div class="block-options">
-                {{-- 🎯 TRIGGER TAMBAH DATA (Menggunakan Modal Dinamis) --}}
-                {{-- <button type="button"
-class="btn btn-sm btn-alt-primary js-bs-tooltip-enabled me-1"
-title="Tambah Data"
-data-bs-toggle="modal"
-data-bs-target="#dynamic-data-modal"
-data-action-url="{{ route('sp.ea.component_content_simpan') }}"
-data-component-id="{{ $component->id }}">
-<i class="fa fa-fw fa-plus"></i> Tambah Data
-</button> --}}
-
-@if(in_array('create', $permissions))
-<button type="button"
-    class="btn btn-sm btn-alt-primary me-1"
+    <div class="content">
+        <form action="{{ route('sp.ea.component_show', $component->id) }}" method="GET">
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" name="search" placeholder="Cari {{ $component->name ?? 'Data' }}" value="{{ request()->input('search') }}">
+                <button class="input-group-text btn btn-primary" type="submit">
+                    <i class="fa fa-fw fa-search"></i>
+                </button>
+            </div>
+        </form>
+    
+        <div class="block block-rounded">
+            <div class="block-header block-header-default">
+                <h3 class="block-title">List {{ $component->name ?? 'Data' }}</h3>
+                <div class="block-options">
+                    {{-- 🎯 TRIGGER TAMBAH DATA (Menggunakan Modal Dinamis) --}}
+                    {{-- <button type="button"
+    class="btn btn-sm btn-alt-primary js-bs-tooltip-enabled me-1"
     title="Tambah Data"
     data-bs-toggle="modal"
     data-bs-target="#dynamic-data-modal"
-    data-action-url="{{ route('admin.ea.university.component_content_simpan') }}"
+    data-action-url="{{ route('sp.ea.component_content_simpan') }}"
     data-component-id="{{ $component->id }}">
     <i class="fa fa-fw fa-plus"></i> Tambah Data
-</button>
-@else
-<button class="btn btn-sm btn-alt-primary me-1" disabled>
-    <i class="fa fa-fw fa-plus"></i> Tambah Data
-</button>
-@endif
-
+    </button> --}}
+    
+    @if(in_array('create', $permissions))
+    <button type="button"
+        class="btn btn-sm btn-alt-primary me-1"
+        title="Tambah Data"
+        data-bs-toggle="modal"
+        data-bs-target="#dynamic-data-modal"
+        data-action-url="{{ route('admin.ea.university.component_content_simpan') }}"
+        data-component-id="{{ $component->id }}">
+        <i class="fa fa-fw fa-plus"></i> Tambah Data
+    </button>
+    @else
+    <button class="btn btn-sm btn-alt-primary me-1" disabled>
+        <i class="fa fa-fw fa-plus"></i> Tambah Data
+    </button>
+    @endif
+    
+                </div>
             </div>
-        </div>
-        
-        <div class="block-content">
-            <div class="table-responsive">
-                <table class="table table-vcenter">
-                    <thead>
-                        <tr>
-                            <th class="text-center" style="width: 100px;">No</th>
-                            <th>Judul</th>
-                            <th>Konten</th>
-                            <th>Tipe Konten</th>
-                            <th>Status</th>
-                            <th>Komentar</th>
-                            <th class="text-center" style="width: 100px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    @if ($component->details->count() > 0)
-                    @foreach ($component->details as $list_component)
-                    @php
-                        $content = $list_component->contents->sortByDesc('created_at')->first();
-                        $type = strtolower($content->content_type ?? '');
-                        $path = $content->file_path ?? null;
-                        $ext  = $path ? strtolower(pathinfo($path, PATHINFO_EXTENSION)) : null;
-                    @endphp
-                    <tr> 
-                        {{-- Kolom 1: Nomor Urut --}} 
-                        <td class="text-center fw-semibold fs-sm"> {{ $loop->iteration }} </td>
-                        {{-- Kolom 2: Judul Detail --}}
-                        <td class="fw-semibold fs-sm">
-                            {{ $list_component->title ?? '-' }}
-                        </td>
-                        {{-- Kolom 3: Konten Preview --}}
-                        <td class="fw-semibold fs-sm">
-                            @if ($content)
-                                @if ($type === 'text')
-                                    {{-- 📝 Konten Teks --}}
-                                    <p class="mb-1 text-truncate" style="max-width: 250px;">
-                                        {!! Str::limit($content->text ?? '❌ Teks Kosong', 100, '...') !!}
-                                    </p>
-                
-                                @elseif (in_array($type, ['file', 'file_path']) && $path)
-                                    {{-- 📁 Konten File --}}
-                                    @if (in_array($ext, ['jpg', 'jpeg', 'png']))
-                                        {{-- 🖼️ Gambar --}}
-                                        <div class="image-preview"
- data-bs-toggle="modal"
- data-bs-target="#imagePreviewModal"
- data-image="{{ asset($path) }}">
-<img src="{{ asset($path) }}"
-     alt="Preview"
-     class="img-thumbnail"
-     style="max-height:60px; cursor:pointer;">
-<div class="overlay">Klik untuk lihat</div>
-</div>
-
-                                    @elseif ($ext === 'pdf')
-                                        {{-- 📄 PDF --}}
-                                        <button type="button"
-                                                class="btn btn-sm btn-alt-primary"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#pdfPreviewModal"
-                                                data-pdf="{{ asset($path) }}">
-                                            <i class="fa fa-file-pdf"></i> Lihat PDF
-                                        </button>
-                                    @else
-                                        {{-- 📦 File Lain --}}
-                                        <p class="mb-1">
-                                            <i class="fa fa-file me-1 text-info"></i>
-                                            <a href="{{ asset($path) }}" download>Download File</a>
+            
+            <div class="block-content">
+                <div class="table-responsive">
+                    <table class="table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 100px;">No</th>
+                                <th>Judul</th>
+                                <th>Konten</th>
+                                <th>Tipe Konten</th>
+                                <th>Status</th>
+                                <th>Komentar</th>
+                                <th class="text-center" style="width: 100px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        @if ($component->details->count() > 0)
+                        @foreach ($component->details as $list_component)
+                        @php
+                            $content = $list_component->contents->sortByDesc('created_at')->first();
+                            $type = strtolower($content->content_type ?? '');
+                            $path = $content->file_path ?? null;
+                            $ext  = $path ? strtolower(pathinfo($path, PATHINFO_EXTENSION)) : null;
+                        @endphp
+                        <tr> 
+                            {{-- Kolom 1: Nomor Urut --}} 
+                            <td class="text-center fw-semibold fs-sm"> {{ $loop->iteration }} </td>
+                            {{-- Kolom 2: Judul Detail --}}
+                            <td class="fw-semibold fs-sm">
+                                {{ $list_component->title ?? '-' }}
+                            </td>
+                            {{-- Kolom 3: Konten Preview --}}
+                            <td class="fw-semibold fs-sm">
+                                @if ($content)
+                                    @if ($type === 'text')
+                                        {{-- 📝 Konten Teks --}}
+                                        <p class="mb-1 text-truncate" style="max-width: 250px;">
+                                            {!! Str::limit($content->text ?? '❌ Teks Kosong', 100, '...') !!}
                                         </p>
+                    
+                                    @elseif (in_array($type, ['file', 'file_path']) && $path)
+                                        {{-- 📁 Konten File --}}
+                                        @if (in_array($ext, ['jpg', 'jpeg', 'png']))
+                                            {{-- 🖼️ Gambar --}}
+                                            <div class="image-preview"
+     data-bs-toggle="modal"
+     data-bs-target="#imagePreviewModal"
+     data-image="{{ asset($path) }}">
+    <img src="{{ asset($path) }}"
+         alt="Preview"
+         class="img-thumbnail"
+         style="max-height:60px; cursor:pointer;">
+    <div class="overlay">Klik untuk lihat</div>
+    </div>
+    
+                                        @elseif ($ext === 'pdf')
+                                            {{-- 📄 PDF --}}
+                                            <button type="button"
+                                                    class="btn btn-sm btn-alt-primary"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#pdfPreviewModal"
+                                                    data-pdf="{{ asset($path) }}">
+                                                <i class="fa fa-file-pdf"></i> Lihat PDF
+                                            </button>
+                                        @else
+                                            {{-- 📦 File Lain --}}
+                                            <p class="mb-1">
+                                                <i class="fa fa-file me-1 text-info"></i>
+                                                <a href="{{ asset($path) }}" download>Download File</a>
+                                            </p>
+                                        @endif
+                    
+                                    @elseif (in_array($type, ['link', 'link_url']) && !empty($content->link_url))
+                                        {{-- 🔗 Link --}}
+                                        <p class="mb-1">
+                                            <i class="fa fa-link me-1 text-success"></i>
+                                            <a href="{{ $content->link_url }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">
+                                                {{ $content->link_url }}
+                                            </a>
+                                        </p>
+                    
+                                    @else
+                                        <span class="text-muted fst-italic">Tidak ada konten</span>
                                     @endif
-                
-                                @elseif (in_array($type, ['link', 'link_url']) && !empty($content->link_url))
-                                    {{-- 🔗 Link --}}
-                                    <p class="mb-1">
-                                        <i class="fa fa-link me-1 text-success"></i>
-                                        <a href="{{ $content->link_url }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">
-                                            {{ $content->link_url }}
-                                        </a>
-                                    </p>
-                
                                 @else
                                     <span class="text-muted fst-italic">Tidak ada konten</span>
                                 @endif
-                            @else
-                                <span class="text-muted fst-italic">Tidak ada konten</span>
-                            @endif
-                        </td>
-                        
-                        {{-- Kolom 4: Tipe Konten --}}
-                        <td class="fw-semibold fs-sm">
-                            {{ $content ? ucfirst(str_replace('_', ' ', $content->content_type)) : '-' }}
-                        </td>
-                
-                        {{-- Kolom 5: Status --}}
-                        <td class="fw-semibold fs-sm">
-                            @php
-                                $status = strtolower($content->status ?? $list_component->status ?? 'proses');
-                            @endphp
-                            @switch($status)
-                                @case('selesai')
-                                    <span class="badge bg-primary">Selesai</span>
-                                    @break
-                                @case('proses')
-                                    <span class="badge bg-warning text-dark">Proses</span>
-                                    @break
-                                @default
-                                    <span class="badge bg-secondary">-</span>
-                            @endswitch
-                        </td>
-                
-                        {{-- Kolom 6: Komentar --}}
-                        <td>
-                            <button type="button"
-                                class="btn btn-sm btn-alt-warning open-komentar-modal"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modal-komentar-tunggal"
-                                data-component-id="{{ $content->id }}">
-                                <i class="fa fa-fw fa-comment"></i><span>Komentar</span>
-                            </button>
-                        </td>
-                
-                        {{-- Kolom 7: Aksi --}}
-                        <td class="text-center">
-                            <div class="btn-group">
-                                {{-- Edit --}}
-                                @if(in_array('update', $permissions))
-                                    <button type="button"
-                                        class="btn btn-sm btn-alt-warning me-2"
-                                        title="Edit"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#dynamic-data-modal"
-                                        data-mode="edit"
-                                        data-id="{{ $list_component->id }}"
-                                        data-title="{{ $list_component->title ?? '' }}"
-                                        data-jenis="{{ ucfirst(strtolower($content->content_type ?? '')) }}"
-                                        data-content="{{ $content->text ?? $content->link_url ?? '' }}"
-                                        data-file="{{ $content?->file_path ? asset($content->file_path) : '' }}"
-                                        data-status="{{ ucfirst($content->status ?? 'Proses') }}"
-                                        data-action-url="{{ route('admin.ea.university.component_content_update', $list_component->id) }}">
-                                        <i class="fa fa-fw fa-pencil"></i>
-                                    </button>
-                                @else
-                                    <button class="btn btn-sm btn-alt-warning me-2" disabled>
-                                        <i class="fa fa-fw fa-pencil"></i>
-                                    </button>
-                                @endif
-                        
-                                {{-- Hapus --}}
-                                @if(in_array('delete', $permissions))
-                                    <button type="button"
-                                        class="btn btn-sm btn-alt-danger"
-                                        title="Hapus"
-                                        onclick="confirmationHapusData('{{ route('admin.ea.university.component_content_delete', $list_component->id) }}')">
-                                        <i class="fa fa-fw fa-trash"></i>
-                                    </button>
-                                @else
-                                    <button class="btn btn-sm btn-alt-danger" disabled>
-                                        <i class="fa fa-fw fa-trash"></i>
-                                    </button>
-                                @endif
-                            </div>
-                        </td>
-                        
+                            </td>
+                            
+                            {{-- Kolom 4: Tipe Konten --}}
+                            <td class="fw-semibold fs-sm">
+                                {{ $content ? ucfirst(str_replace('_', ' ', $content->content_type)) : '-' }}
+                            </td>
+                    
+                            {{-- Kolom 5: Status --}}
+                            <td class="fw-semibold fs-sm">
+                                @php
+                                    $status = strtolower($content->status ?? $list_component->status ?? 'proses');
+                                @endphp
+                                @switch($status)
+                                    @case('selesai')
+                                        <span class="badge bg-primary">Selesai</span>
+                                        @break
+                                    @case('proses')
+                                        <span class="badge bg-warning text-dark">Proses</span>
+                                        @break
+                                    @default
+                                        <span class="badge bg-secondary">-</span>
+                                @endswitch
+                            </td>
+                    
+                            {{-- Kolom 6: Komentar --}}
+                            <td>
+                                <button type="button"
+                                    class="btn btn-sm btn-alt-warning open-komentar-modal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modal-komentar-tunggal"
+                                    data-component-id="{{ $content->id }}">
+                                    <i class="fa fa-fw fa-comment"></i><span>Komentar</span>
+                                </button>
+                            </td>
+                    
+                            {{-- Kolom 7: Aksi --}}
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    {{-- Edit --}}
+                                    @if(in_array('update', $permissions))
+                                        <button type="button"
+                                            class="btn btn-sm btn-alt-warning me-2"
+                                            title="Edit"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#dynamic-data-modal"
+                                            data-mode="edit"
+                                            data-id="{{ $list_component->id }}"
+                                            data-title="{{ $list_component->title ?? '' }}"
+                                            data-jenis="{{ ucfirst(strtolower($content->content_type ?? '')) }}"
+                                            data-content="{{ $content->text ?? $content->link_url ?? '' }}"
+                                            data-file="{{ $content?->file_path ? asset($content->file_path) : '' }}"
+                                            data-status="{{ ucfirst($content->status ?? 'Proses') }}"
+                                            data-action-url="{{ route('admin.ea.university.component_content_update', $list_component->id) }}">
+                                            <i class="fa fa-fw fa-pencil"></i>
+                                        </button>
+                                    @else
+                                        <button class="btn btn-sm btn-alt-warning me-2" disabled>
+                                            <i class="fa fa-fw fa-pencil"></i>
+                                        </button>
+                                    @endif
+                            
+                                    {{-- Hapus --}}
+                                    @if(in_array('delete', $permissions))
+                                        <button type="button"
+                                            class="btn btn-sm btn-alt-danger"
+                                            title="Hapus"
+                                            onclick="confirmationHapusData('{{ route('admin.ea.university.component_content_delete', $list_component->id) }}')">
+                                            <i class="fa fa-fw fa-trash"></i>
+                                        </button>
+                                    @else
+                                        <button class="btn btn-sm btn-alt-danger" disabled>
+                                            <i class="fa fa-fw fa-trash"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+                            
+        </tr>
+    
+        {{-- Modal Komentar (bisa include partial jika perlu) --}}
+        {{-- @include('components.modals.komentar', ['detail' => $list_component]) --}}
+    @endforeach
+    @else
+    <tr>
+        <td colspan="7" class="text-center text-danger fw-semibold fs-sm">
+            Belum Ada Data Detail Komponen.
+        </td>
     </tr>
-
-    {{-- Modal Komentar (bisa include partial jika perlu) --}}
-    {{-- @include('components.modals.komentar', ['detail' => $list_component]) --}}
-@endforeach
-@else
-<tr>
-    <td colspan="7" class="text-center text-danger fw-semibold fs-sm">
-        Belum Ada Data Detail Komponen.
-    </td>
-</tr>
-@endif
-
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- 🚀 MODAL DINAMIS UNTUK TAMBAH & EDIT DATA DETAIL --}}
-<div class="modal fade" id="dynamic-data-modal" tabindex="-1" aria-labelledby="modal-block-vcenter" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content">
-    <div class="block block-rounded block-transparent mb-0">
-      <div class="block-header block-header-default">
-        <h3 class="block-title" id="modal-title-dynamic">Tambah Data Komponen</h3>
-        <div class="block-options">
-          <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
-            <i class="fa fa-fw fa-times"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="block-content fs-sm">
-        <form id="dynamic-data-form" action="" method="POST" enctype="multipart/form-data">
-          @csrf
-          <input type="hidden" name="id" id="dynamic_id">
-          <input type="hidden" name="component_id" id="dynamic_component_id" value="{{ $component->id }}">
-
-          {{-- Judul --}}
-          <div class="mb-4">
-            <label for="dynamic_title" class="form-label">Judul <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="dynamic_title" name="title" placeholder="Masukkan judul ..." required>
-          </div>
-
-          {{-- Jenis Konten --}}
-          <div class="mb-4">
-            <label for="dynamic_jenis_konten" class="form-label">Pilih Jenis Konten</label>
-            <select class="form-select" id="dynamic_jenis_konten" name="jenis_konten" required>
-              <option selected disabled value="">Pilih Jenis Konten</option>
-              <option value="Text">Text</option>
-              <option value="File">File</option>
-              <option value="Link">Link URL</option>
-            </select>
-          </div>
-
-          {{-- Konten Dinamis --}}
-          <div id="dynamic_konten_dinamis"></div>
-
-          {{-- Status --}}
-          <div class="mb-4">
-            <label for="dynamic_status" class="form-label">Status</label>
-            <select class="form-select" id="dynamic_status" name="status" required>
-              <option selected disabled value="">Pilih Status</option>
-              <option value="Proses">Proses</option>
-              <option value="Selesai">Selesai</option>
-            </select>
-          </div>
-      </div>
-      <div class="block-content block-content-full text-end bg-body">
-        <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Tutup</button>
-        <button type="submit" class="btn btn-sm btn-primary" id="btn-submit-dynamic">Simpan</button>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
-</div>
-
-<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-        <div class="modal-body text-center">
-            <img id="image-preview-full" src="" alt="Preview" class="img-fluid rounded">
-        </div>
-    </div>
-</div>
-</div>
-
-<div class="modal fade" id="pdfPreviewModal" tabindex="-1" aria-hidden="true">
-<div class="modal-dialog modal-xl modal-dialog-centered">
-  <div class="modal-content">
-    <div class="modal-body p-0">
-      <iframe id="pdf-preview-frame" src="" width="100%" height="700px" style="border:none;"></iframe>
-    </div>
-  </div>
-</div>
-</div>
-
-{{-- Modal Komentar --}}
-<div class="modal fade" id="modal-komentar-tunggal" tabindex="-1" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-        <div class="block block-rounded block-transparent mb-0">
-            <div class="block-header block-header-default">
-                <h3 class="block-title">Komentar</h3>
-                <div class="block-options">
-                    <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa fa-fw fa-times"></i>
-                    </button>
+    @endif
+    
+                    </table>
                 </div>
             </div>
-
-            <form id="form-kirim-komentar" method="POST">
-                @csrf
-                <input type="hidden" name="id" id="modal-component-id" value="">
-
-                <div class="block-content fs-sm">
-                    <div class="mb-3">
-                        <h5>Riwayat Komentar</h5>
-                        <div id="riwayat-komentar-area">
-                            <p class="text-muted">Pilih item untuk memuat komentar...</p>
-                        </div>
+        </div>
+    </div>
+    
+    {{-- 🚀 MODAL DINAMIS UNTUK TAMBAH & EDIT DATA DETAIL --}}
+    <div class="modal fade" id="dynamic-data-modal" tabindex="-1" aria-labelledby="modal-block-vcenter" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="block block-rounded block-transparent mb-0">
+          <div class="block-header block-header-default">
+            <h3 class="block-title" id="modal-title-dynamic">Tambah Data Komponen</h3>
+            <div class="block-options">
+              <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                <i class="fa fa-fw fa-times"></i>
+              </button>
+            </div>
+          </div>
+    
+          <div class="block-content fs-sm">
+            <form id="dynamic-data-form" action="" method="POST" enctype="multipart/form-data">
+              @csrf
+              <input type="hidden" name="id" id="dynamic_id">
+              <input type="hidden" name="component_id" id="dynamic_component_id" value="{{ $component->id }}">
+    
+              {{-- Judul --}}
+              <div class="mb-4">
+                <label for="dynamic_title" class="form-label">Judul <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="dynamic_title" name="title" placeholder="Masukkan judul ..." required>
+              </div>
+    
+              {{-- Jenis Konten --}}
+              <div class="mb-4">
+                <label for="dynamic_jenis_konten" class="form-label">Pilih Jenis Konten</label>
+                <select class="form-select" id="dynamic_jenis_konten" name="jenis_konten" required>
+                  <option selected disabled value="">Pilih Jenis Konten</option>
+                  <option value="Text">Text</option>
+                  <option value="File">File</option>
+                  <option value="Link">Link URL</option>
+                </select>
+              </div>
+    
+              {{-- Konten Dinamis --}}
+              <div id="dynamic_konten_dinamis"></div>
+    
+              {{-- Status --}}
+              <div class="mb-4">
+                <label for="dynamic_status" class="form-label">Status</label>
+                <select class="form-select" id="dynamic_status" name="status" required>
+                  <option selected disabled value="">Pilih Status</option>
+                  <option value="Proses">Proses</option>
+                  <option value="Selesai">Selesai</option>
+                </select>
+              </div>
+          </div>
+          <div class="block-content block-content-full text-end bg-body">
+            <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-sm btn-primary" id="btn-submit-dynamic">Simpan</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+    <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img id="image-preview-full" src="" alt="Preview" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <div class="modal fade" id="pdfPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <iframe id="pdf-preview-frame" src="" width="100%" height="700px" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+    {{-- Modal Komentar --}}
+    <div class="modal fade" id="modal-komentar-tunggal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="block block-rounded block-transparent mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Komentar</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-fw fa-times"></i>
+                        </button>
                     </div>
                 </div>
-
-                <div class="text-end bg-body p-3 rounded-bottom">
-                    <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </form>
+    
+                <form id="form-kirim-komentar" method="POST">
+                    @csrf
+                    <input type="hidden" name="id" id="modal-component-id" value="">
+    
+                    <div class="block-content fs-sm">
+                        <div class="mb-3">
+                            <h5>Riwayat Komentar</h5>
+                            <div id="riwayat-komentar-area">
+                                <p class="text-muted">Pilih item untuk memuat komentar...</p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="text-end bg-body p-3 rounded-bottom">
+                        <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-</div>
+    </div>
 
-@endsection
-
+</main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -551,7 +549,7 @@ data-component-id="{{ $component->id }}">
     });
 
     $(document).ready(function() {
-    const getCommentsUrlTemplate = '{{ route('sp.ea.getComments', ['id' => ':id']) }}';
+    const getCommentsUrlTemplate = '{{ route('admin.ea.university.getComments', ['id' => ':id']) }}';
 
     $('.open-komentar-modal').on('click', function() {
         const componentContentId = $(this).data('component-id'); 
@@ -593,3 +591,4 @@ data-component-id="{{ $component->id }}">
 });
 
 </script>
+@endsection
