@@ -27,7 +27,7 @@
           </a>
         </li>
         <li class="nav-main-item">
-          <a class="nav-main-link" href="">
+          <a class="nav-main-link" href="{{ route('admin.ea.university.show') }}">
             <span class="nav-main-link-name">Universitas</span>
           </a>
         </li>

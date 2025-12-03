@@ -1,50 +1,43 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\EA;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\University;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Role;
-use App\Models\RoleDetails;
-use App\Models\University;
-use Illuminate\Http\Request;
 use Exception;
 
-class AccountController extends Controller
+class UniversityController extends Controller
 {
     public function index(Request $request)
     {
         // Mulai query
-        $query = User::query();
+        $query = University::query();
 
         // Jika ada pencarian
         if ($request->filled('search')) {
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%");
             });
         }
 
-        $akun = $query->get();
-        $role = Role::all();
-        $university = University::all();
+        $university = $query->get();
 
-        return view('admin.akun.index', compact('akun', 'role','university'));
+        return view('admin.ea.university.index', compact('university'));
     }
 
 
-    public function save_account(Request $request)
+    public function save(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'     => 'required',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'role_id'  => 'required',
+            'name'     => 'required|unique:universities,name',
+            'type'    => 'required',
+            'code' => 'required',
+            'estabilished_year'  => 'required',
         ]);
     
         if ($validator->fails()) {
@@ -54,19 +47,12 @@ class AccountController extends Controller
         DB::beginTransaction();
 
         try {
-            
-            $detail_role = RoleDetails::create([
-                'role_id' => $request->role_id,
-                'university_id' => $request->university,
-                'name' => $request->name,
-                'position' => $request->position
-            ]);
 
-            User::create([
-                'role_detail_id'  => $detail_role->id,
+            University::create([
                 'name'     => $request->name,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
+                'type'    => $request->type,
+                'code' => $request->code,
+                'estabilished_year' => $request->estabilished_year
             ]);
 
             DB::commit();
@@ -79,13 +65,15 @@ class AccountController extends Controller
         }
     }
 
-    public function update_account(Request $request)
+    public function update(Request $request)
     {
-        $id_user = $request->id;
+        $id_university = $request->id;
 
         $validator = Validator::make($request->all(), [
-            'name'  => 'required',
-            'email' => 'required|email|unique:users,email,' . $id_user, // biar email tidak duplikat, kecuali dirinya sendiri
+            'name'     => 'required|unique:universities,name',
+            'type'    => 'required',
+            'code' => 'required',
+            'estabilished_year'  => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -95,18 +83,16 @@ class AccountController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = User::findOrFail($id_user);
+            $university = University::findOrFail($id_university);
 
             $data = [
-                'name'  => $request->name,
-                'email' => $request->email,
+                'name'     => $request->name,
+                'type'    => $request->type,
+                'code' => $request->code,
+                'estabilished_year' => $request->estabilished_year
             ];
 
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
-            }
-
-            $user->update($data);
+            $university->update($data);
 
             DB::commit();
 
@@ -121,16 +107,16 @@ class AccountController extends Controller
         }
     }
 
-    public function delete_account($id)
+    public function delete($id)
     {
-        $user = User::find($id);
+        $user = University::find($id);
 
         if (!$user) {
             return redirect()->back()->with('toast_error', 'Data tidak ditemukan!');
         }
 
         $user->delete();
-        return redirect()->route('akun')
+        return redirect()->route('admin.ea.university.show')
                          ->with('toast_success', 'Data Berhasil Dihapus!');
     }
 }

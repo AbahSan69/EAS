@@ -106,8 +106,13 @@
                             <input type="email" class="form-control" id="email" name="email"  placeholder="Masukan email ..." value="{{ $list_akun->email }}" required>
                         </div>
                         <div class="mb-4">
-                          <label class="col-sm-4 col-form-label" for="example-hf-universitas">Universitas <span class="text-danger">*</span></label>
-                          <input type="text" class="form-control" id="universitas" name="universitas"  placeholder="Masukan Universitas ..." value="{{ $list_akun->detail_role->university_id }}" required>
+                          <label for="role" class="form-label">Universitas <span class="text-danger">*</span></label>
+                          <select id="university" name="university" class="form-select select-search instructor" required>
+                            <option value="" selected disabled>Pilih Universitas</option>
+                            @foreach ($university as $list_university)
+                                  <option value="{{ $list_university->id }}" {{ old('university', $list_akun->detail_role->university_id ?? '') == $list_university->id ? 'selected' : '' }}>{{ $list_university->name }}</option>
+                            @endforeach
+                          </select>
                         </div>
                           <div class="mb-4">
                             <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
@@ -175,8 +180,13 @@
                             <input type="email" class="form-control" id="email" name="email"  placeholder="Masukan email ..." required>
                         </div>
                         <div class="mb-4">
-                          <label class="col-sm-4 col-form-label" for="example-hf-universitas">Universitas <span class="text-danger">*</span></label>
-                          <input type="text" class="form-control" id="universitas" name="universitas"  placeholder="Masukan Universitas ..." required>
+                          <label for="role" class="form-label">Universitas <span class="text-danger">*</span></label>
+                          <select id="university" name="university" class="form-select select-search instructor" required>
+                            <option value="" selected disabled>Pilih Universitas</option>
+                            @foreach ($university as $list_university)
+                                  <option value="{{ $list_university->id }}">{{ $list_university->name }}</option>
+                            @endforeach
+                          </select>
                         </div>
                         <div class="mb-4">
                             <label for="role" class="form-label">Pilih PTS</label>

@@ -103,7 +103,7 @@ class DomainController extends Controller
         }
 
         $domain->delete();
-        return redirect()->route('admin.ea.domain.domain')
+        return redirect()->route('admin.ea.domain.show')
                          ->with('toast_success', 'Data Berhasil Dihapus!');
     }
 }

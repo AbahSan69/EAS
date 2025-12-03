@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\ProgressMonitoringController as AdminProgressMoni
 use App\Http\Controllers\Admin\EA\DomainController as AdminEADomainController;
 use App\Http\Controllers\Admin\EA\SubDomainController as AdminEASubDomainController;
 use App\Http\Controllers\Admin\EA\ComponentController as AdminEAComponentController;
+use App\Http\Controllers\Admin\EA\UniversityController as AdminEAUniversityController;
+use App\Http\Controllers\Admin\EA\ProgressController as AdminEAProgressController;
+use App\Http\Controllers\Admin\EA\ContentController as AdminEAContentController;
 
 //Stakeholder PTS Controller
 use App\Http\Controllers\StakeholderPTS\DashboardController as StakeholderPTSDashboardController;
@@ -72,6 +75,30 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/update_component', [AdminEAComponentController::class, 'update_component'])->name('update_component');
                 Route::get('/delete_component/{id}', [AdminEAComponentController::class, 'delete_component'])->name('delete_component');
             });
+
+            Route::prefix('university')->name('university.')->group(function () {
+                Route::get('/university', [AdminEAUniversityController::class, 'index'])->name('show');
+                Route::post('/save', [AdminEAUniversityController::class, 'save'])->name('save');
+                Route::post('/update', [AdminEAUniversityController::class, 'update'])->name('update');
+                Route::get('/delete/{id}', [AdminEAUniversityController::class, 'delete'])->name('delete');
+
+                Route::get('/dashboard/{id}', [AdminEAProgressController::class, 'index'])->name('dashboard');
+                Route::get('/content/{id}/{UniversityId}', [AdminEAContentController::class, 'index'])->name('content');
+                Route::post('/component_content_simpan', [AdminEAContentController::class, 'storeComponent'])->name('component_content_simpan');
+                Route::post('/component_content_update/{id}', [AdminEAContentController::class, 'updateComponent'])->name('component_content_update');
+                Route::get('/component_content_delete/{id}', [AdminEAContentController::class, 'deleteComponent'])->name('component_content_delete');
+                Route::post('/subdomain_content_simpan', [AdminEAContentController::class, 'storeSubdomain'])->name('subdomain_content_simpan');
+                Route::get('/component_show/{id}', [AdminEAContentController::class, 'component_detail'])->name('component_show');
+                Route::get('/stakeholder/{id}', [AdminEAContentController::class, 'stakeholder_detail'])->name('stakeholder');
+                Route::get('/stakeholder_create/{id}', [AdminEAContentController::class, 'create'])->name('stakeholder_create');
+                Route::get('/stakeholder_edit/{id}/{componentId}', [AdminEAContentController::class, 'edit'])->name('stakeholder_edit');
+                // Route::post('/stakeholder_simpan', [AdminEAContentController::class, 'storeStakeholder'])->name('stakeholder_simpan');
+                Route::post('/stakeholder_store', [AdminEAContentController::class, 'storeStakeholder'])->name('stakeholder_store');
+                Route::put('/stakeholder_update', [AdminEAContentController::class, 'updateStakeholder'])->name('stakeholder_update');
+                Route::get('stakeholder_destroy/{id}', [AdminEAContentController::class, 'destroyStakeholder'])->name('stakeholder_destroy');
+                Route::get('/getComments/{id}', [AdminEAContentController::class, 'getComments'])
+                    ->name('getComments');
+                });
         });
 
         Route::prefix('progress')->name('progress.')->group(function () {
