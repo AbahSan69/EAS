@@ -207,18 +207,44 @@
                     
                             {{-- Kolom 6: Komentar --}}
                             <td>
-                                <button type="button"
+                                {{-- <button type="button"
                                     class="btn btn-sm btn-alt-warning open-komentar-modal"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modal-komentar-tunggal"
                                     data-component-id="{{ $content->id }}">
                                     <i class="fa fa-fw fa-comment"></i><span>Komentar</span>
-                                </button>
+                                </button> --}}
+
+                                @php
+    $totalComments = $content->comments->count();
+    $newComments = $content->comments
+        ->where('created_at', '>=', now()->subDay()) // komentar 24 jam terakhir
+        ->count();
+@endphp
+    <button type="button"
+        class="btn btn-sm btn-alt-warning open-komentar-modal position-relative"
+        data-bs-toggle="modal"
+        data-bs-target="#modal-komentar-tunggal"
+        data-component-id="{{ $content->id }}">
+        
+        <i class="fa fa-fw fa-comment"></i> Komentar ({{ $totalComments }})
+
+        {{-- Badge Komentar Baru --}}
+        @if($newComments > 0)
+            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+                {{ $newComments }}
+            </span>
+        @endif
+    </button>
+
                             </td>
                     
                             {{-- Kolom 7: Aksi --}}
                             <td class="text-center">
                                 <div class="btn-group">
+                                    <a href="{{ route('sp.ea.gaps', $list_component->id) }}" class="btn btn-sm btn-alt-info me-2" title="Gaps">
+                                        <i class="fa fa-fw fa-eye"></i>
+                                    </a>
                                     {{-- Edit --}}
                                     @if(in_array('update', $permissions))
                                         <button type="button"

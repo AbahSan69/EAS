@@ -152,12 +152,33 @@
                                         @endswitch
                                     </td>
                                     <td class="text-center">
-                                        <button type="button"
+                                        {{-- <button type="button"
                                             class="btn btn-sm btn-alt-warning open-komentar-modal"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modal-komentar-tunggal"
                                             data-component-id="{{ $content->id }}">
-                                            <i class="fa fa-fw fa-comment"></i>
+                                            <i class="fa fa-fw fa-comment"></i>Komentar
+                                        </button> --}}
+                                        @php
+                                        $totalComments = $content->comments->count();
+                                        $newComments = $content->comments
+                                            ->where('created_at', '>=', now()->subDay()) // komentar 24 jam terakhir
+                                            ->count();
+                                    @endphp
+                                        <button type="button"
+                                            class="btn btn-sm btn-alt-warning open-komentar-modal position-relative"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modal-komentar-tunggal"
+                                            data-component-id="{{ $content->id }}">
+                                            
+                                            <i class="fa fa-fw fa-comment"></i> Komentar ({{ $totalComments }})
+                                    
+                                            {{-- Badge Komentar Baru --}}
+                                            @if($newComments > 0)
+                                                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+                                                    {{ $newComments }}
+                                                </span>
+                                            @endif
                                         </button>
                                     </td>
                                 </tr>

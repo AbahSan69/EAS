@@ -774,4 +774,21 @@ public function getComments($id)
     ]);
 }
 
+public function gaps($id)
+{
+    // Data komponen detail sebagai head/title
+    $detail = ComponentDetail::with([
+        'component.subdomain'
+    ])->findOrFail($id);
+
+    // Riwayat perubahan konten
+    $histories = ComponentContent::with('updatedBy')
+            ->where('component_detail_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+    return view('stakeholder_pts.ea.komponen.detail', compact('detail', 'histories'));
+}
+
+
 }

@@ -131,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/create', [StakeholderPTSEnterpriseArchitectureController::class, 'create'])->name('create');
             Route::post('/store_pts', [StakeholderPTSEnterpriseArchitectureController::class, 'store_pts'])->name('store_pts');
             Route::get('/index/{id}', [StakeholderPTSEnterpriseArchitectureController::class, 'index'])->name('index');
+            Route::get('/component_gaps/{id}', [StakeholderPTSContentController::class, 'gaps'])->name('gaps');
             
         });
 

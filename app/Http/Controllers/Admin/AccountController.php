@@ -41,10 +41,14 @@ class AccountController extends Controller
     public function save_account(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'     => 'required',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'role_id'  => 'required',
+            'name'                  => 'required',
+            'email'                 => 'required|email|unique:users,email',
+            'password'              => 'required|min:6',
+            'konfirmasi_password'   => 'required|same:password',
+            'role_id'               => 'required',
+            'university'            => 'required'
+        ], [
+            'konfirmasi_password.same' => 'Konfirmasi password tidak cocok.'
         ]);
     
         if ($validator->fails()) {
@@ -59,7 +63,7 @@ class AccountController extends Controller
                 'role_id' => $request->role_id,
                 'university_id' => $request->university,
                 'name' => $request->name,
-                'position' => $request->position
+                'position' => $request->name
             ]);
 
             User::create([
