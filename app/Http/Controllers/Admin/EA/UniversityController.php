@@ -70,7 +70,7 @@ class UniversityController extends Controller
         $id_university = $request->id;
 
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|unique:universities,name',
+            'name'     => 'required',
             'type'    => 'required',
             'code' => 'required',
             'estabilished_year'  => 'required',

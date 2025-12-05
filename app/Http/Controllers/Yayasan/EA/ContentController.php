@@ -20,159 +20,160 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\UserPermission;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Validator;
+use App\Models\CommentRead;
 
 class ContentController extends Controller
 {
     public function index($id, Request $request)
-{
-    $user = Auth::user();
-    $userUniversityId = $user->detail_role->university_id;
+    {
+        $user = Auth::user();
+        $userUniversityId = $user->detail_role->university_id;
 
-    // 🔹 Ambil semua izin komponen untuk user ini
-    $userPermissions = UserPermission::where('user_id', $user->id)
-        ->pluck('component_id')
-        ->toArray();
+        // 🔹 Ambil semua izin komponen untuk user ini
+        $userPermissions = UserPermission::where('user_id', $user->id)
+                            ->pluck('component_id')
+                            ->toArray();
 
-    // 🔹 Jika user tidak punya izin spesifik → beri akses penuh
-    if (empty($userPermissions)) {
-        $userPermissions = Component::pluck('id')->toArray();
-    }
-
-    // 🔹 Ambil subdomain lengkap untuk universitas ini
-    $subdomain = Subdomain::with([
-        'component' => function ($query) use ($userUniversityId) {
-            $query->with(['details' => function ($q) use ($userUniversityId) {
-                // Filtering Detail berdasarkan university_id
-                $q->where('university_id', $userUniversityId)
-                    ->with('contents'); // Memuat contents untuk cek status
-            }]);
+        // 🔹 Jika user tidak punya izin spesifik → beri akses penuh
+        if (empty($userPermissions)) {
+            $userPermissions = Component::pluck('id')->toArray();
         }
-    ])->findOrFail($id);
 
-    // Untuk memastikan setiap component punya properti progress (jika diperlukan untuk view)
-    $componentCount = 0;
-    $componentProgressSum = 0;
+        // 🔹 Ambil subdomain lengkap untuk universitas ini
+        $subdomain = Subdomain::with([
+            'component' => function ($query) use ($userUniversityId) {
+                $query->with(['details' => function ($q) use ($userUniversityId) {
+                    // Filtering Detail berdasarkan university_id
+                    $q->where('university_id', $userUniversityId)
+                        ->with('contents'); // Memuat contents untuk cek status
+                }]);
+            }
+        ])->findOrFail($id);
 
-    // Loop ini akan berjalan HANYA untuk Component yang memiliki Detail 
-    // setelah filtering university_id (misal: 3 Component)
-    foreach ($subdomain->component as $component) {
-        $details = $component->details;
+        // Untuk memastikan setiap component punya properti progress (jika diperlukan untuk view)
+        $componentCount = 0;
+        $componentProgressSum = 0;
+
+        // Loop ini akan berjalan HANYA untuk Component yang memiliki Detail 
+        // setelah filtering university_id (misal: 3 Component)
+        foreach ($subdomain->component as $component) {
+            $details = $component->details;
         
-        $detailProgressSum = 0;
-        $detailCount = 0;
+            $detailProgressSum = 0;
+            $detailCount = 0;
 
-        if ($details->isNotEmpty()) {
-            foreach ($details as $detail) {
-                // 🔹 Ambil content terbaru untuk detail ini
-                $latestContent = $detail->contents->sortByDesc('created_at')->first();
-                $detailProgress = 0;
+            if ($details->isNotEmpty()) {
+                foreach ($details as $detail) {
+                    // 🔹 Ambil content terbaru untuk detail ini
+                    $latestContent = $detail->contents->sortByDesc('created_at')->first();
+                    $detailProgress = 0;
                 
-                if ($latestContent) {
-                    if ($latestContent->status === 'Selesai') {
-                        $detailProgress = 100;
-                    } elseif ($latestContent->status === 'Proses') {
-                        $detailProgress = 50;
+                    if ($latestContent) {
+                        if ($latestContent->status === 'Selesai') {
+                            $detailProgress = 100;
+                        } elseif ($latestContent->status === 'Proses') {
+                            $detailProgress = 50;
+                        }
                     }
+
+                    $detailProgressSum += $detailProgress;
+                    $detailCount++;
                 }
 
-                $detailProgressSum += $detailProgress;
-                $detailCount++;
+                // 🔹 Hitung rata-rata progress antar detail di komponen
+                $component->progress = $detailCount > 0
+                                        ? round($detailProgressSum / $detailCount, 2)
+                                        : 0;
+            } else {
+                $component->progress = 0;
             }
 
-            // 🔹 Hitung rata-rata progress antar detail di komponen
-            $component->progress = $detailCount > 0
-                ? round($detailProgressSum / $detailCount, 2)
-                : 0;
-        } else {
-            $component->progress = 0;
+            $componentProgressSum += $component->progress;
+            // $componentCount++ di sini akan menghitung HANYA Component yang ada di Collection $subdomain->component 
+            // yang sudah difilter oleh Eager Loading Details. Inilah sumber masalah 83.33%.
+            $componentCount++; 
         }
 
-        $componentProgressSum += $component->progress;
-        // $componentCount++ di sini akan menghitung HANYA Component yang ada di Collection $subdomain->component 
-        // yang sudah difilter oleh Eager Loading Details. Inilah sumber masalah 83.33%.
-        $componentCount++; 
+        // --- PERBAIKAN DILAKUKAN DI SINI ---
+
+        // 1. Ambil jumlah TOTAL Component yang seharusnya ada (misalnya: 5)
+        // Ini mengasumsikan semua Component yang dibutuhkan ada di tabel 'components'
+        // dan terhubung ke Subdomain saat ini.
+        $totalRequiredComponents = Component::where('subdomain_id', $id)->count(); 
+
+        // 2. Hitung rata-rata progress menggunakan total Component yang benar sebagai pembagi.
+        // Jika $totalRequiredComponents = 5 dan $componentProgressSum = 250, hasilnya 50.00%.
+        $subdomainProgress = $totalRequiredComponents > 0 
+                                ? round($componentProgressSum / $totalRequiredComponents, 2) 
+                                : 0;
+
+        // Karena Anda sudah memperbaiki Accessor di model SubDomain, 
+        // Anda juga bisa mengganti seluruh loop di atas dan langsung menggunakan Accessor:
+        // $subdomainProgress = $subdomain->progress; 
+        // *Tetapi* pastikan Accessor SubDomain juga sudah diperbaiki untuk menghitung total Component yang benar.
+
+        return view('yayasan.ea.index', [
+            'subdomain' => $subdomain,
+            'subkomponendetail' => $subdomain->component,
+            'progress' => $subdomainProgress,
+            'userPermissions' => $userPermissions,
+        ]);
     }
-
-    // --- PERBAIKAN DILAKUKAN DI SINI ---
-
-    // 1. Ambil jumlah TOTAL Component yang seharusnya ada (misalnya: 5)
-    // Ini mengasumsikan semua Component yang dibutuhkan ada di tabel 'components'
-    // dan terhubung ke Subdomain saat ini.
-    $totalRequiredComponents = Component::where('subdomain_id', $id)->count(); 
-
-    // 2. Hitung rata-rata progress menggunakan total Component yang benar sebagai pembagi.
-    // Jika $totalRequiredComponents = 5 dan $componentProgressSum = 250, hasilnya 50.00%.
-    $subdomainProgress = $totalRequiredComponents > 0 
-        ? round($componentProgressSum / $totalRequiredComponents, 2) 
-        : 0;
-
-    // Karena Anda sudah memperbaiki Accessor di model SubDomain, 
-    // Anda juga bisa mengganti seluruh loop di atas dan langsung menggunakan Accessor:
-    // $subdomainProgress = $subdomain->progress; 
-    // *Tetapi* pastikan Accessor SubDomain juga sudah diperbaiki untuk menghitung total Component yang benar.
-
-    return view('yayasan.ea.index', [
-        'subdomain' => $subdomain,
-        'subkomponendetail' => $subdomain->component,
-        'progress' => $subdomainProgress,
-        'userPermissions' => $userPermissions,
-    ]);
-}
 
     public function component_detail($id, Request $request)
-{
-    $search = $request->input('search');
-    $user = Auth::user();
+    {
+        $search = $request->input('search');
+        $user = Auth::user();
 
-    // 1️⃣ Ambil komponen utama
-    $component = Component::find($id);
+        // 1️⃣ Ambil komponen utama
+        $component = Component::find($id);
 
-    if (!$component) {
-        return redirect()->back()->with('error', 'Data Komponen tidak ditemukan.');
+        if (!$component) {
+            return redirect()->back()->with('error', 'Data Komponen tidak ditemukan.');
+        }
+
+        // 2️⃣ Ambil semua detail + konten terbaru
+        $details = ComponentDetail::where('component_id', $component->id)
+                    ->when($search, function ($query, $search) {
+                        $query->where('title', 'like', "%{$search}%");
+                    })
+                    ->with([
+                        'contents' => fn($query) => $query->latest('created_at'),
+                        'latest.updatedBy',
+                        'histories.updatedBy'
+                    ])
+                    ->orderByDesc('id')
+                    ->get();
+
+        // Supaya $component->details bisa langsung dipakai di blade
+        $component->setRelation('details', $details);
+
+        // 3️⃣ Ambil semua izin user untuk komponen ini
+        $permissions = UserPermission::where('user_id', $user->id)
+                        ->where('component_id', $component->id)
+                        ->pluck('access')
+                        ->toArray();
+
+        // 4️⃣ Jika user tidak punya izin sama sekali → akses penuh
+        if (empty($permissions)) {
+            // Ini yang penting: user tanpa permission TETAP boleh masuk
+            $permissions = ['lihat', 'create', 'update', 'delete'];
+        }
+
+        // ⚠️ Jangan abort 403 lagi — biarkan user tanpa izin tetap bisa lihat halaman
+        // if (!in_array('view', $permissions)) {
+        //     abort(403, 'Anda tidak memiliki izin untuk melihat halaman ini.');
+        // }
+
+        // 5️⃣ Kirim data ke view
+        return view('yayasan.ea.komponen.show', [
+            'component' => $component,
+            'search' => $search,
+            'permissions' => $permissions,
+        ]);
     }
 
-    // 2️⃣ Ambil semua detail + konten terbaru
-    $details = ComponentDetail::where('component_id', $component->id)
-        ->when($search, function ($query, $search) {
-            $query->where('title', 'like', "%{$search}%");
-        })
-        ->with([
-            'contents' => fn($query) => $query->latest('created_at'),
-            'latest.updatedBy',
-            'histories.updatedBy'
-        ])
-        ->orderByDesc('id')
-        ->get();
-
-    // Supaya $component->details bisa langsung dipakai di blade
-    $component->setRelation('details', $details);
-
-    // 3️⃣ Ambil semua izin user untuk komponen ini
-    $permissions = UserPermission::where('user_id', $user->id)
-        ->where('component_id', $component->id)
-        ->pluck('access')
-        ->toArray();
-
-    // 4️⃣ Jika user tidak punya izin sama sekali → akses penuh
-    if (empty($permissions)) {
-        // Ini yang penting: user tanpa permission TETAP boleh masuk
-        $permissions = ['lihat', 'create', 'update', 'delete'];
-    }
-
-    // ⚠️ Jangan abort 403 lagi — biarkan user tanpa izin tetap bisa lihat halaman
-    // if (!in_array('view', $permissions)) {
-    //     abort(403, 'Anda tidak memiliki izin untuk melihat halaman ini.');
-    // }
-
-    // 5️⃣ Kirim data ke view
-    return view('yayasan.ea.komponen.show', [
-        'component' => $component,
-        'search' => $search,
-        'permissions' => $permissions,
-    ]);
-}
-
-public function stakeholder_detail($id, Request $request)
+    public function stakeholder_detail($id, Request $request)
     {
         // 1️⃣ Ambil komponen berdasarkan ID
         $component = Component::find($id);
@@ -279,6 +280,28 @@ public function stakeholder_detail($id, Request $request)
                 'created_at' => $comment->created_at->format('d M Y H:i'),
             ],
         ]);
+    }
+
+    public function updateReadStatus(Request $request)
+    {
+        $request->validate([
+            'component_content_id' => 'required|integer'
+        ]);
+
+        $userId = Auth::id();
+
+        // Update atau buat baru
+        CommentRead::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'component_content_id' => $request->component_content_id,
+            ],
+            [
+                'last_read_at' => now()
+            ]
+        );
+
+        return response()->json(['success' => true]);
     }
 
 }

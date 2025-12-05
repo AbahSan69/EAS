@@ -12,9 +12,8 @@
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('oneui/media/favicons/apple-touch-icon-180x180.png') }}">
         <link rel="stylesheet" id="css-main" href="{{ asset('oneui/css/oneui.min.css') }}"><link id="css-theme" rel="stylesheet" href="{{ asset('oneui/css/themes/amethyst.min.css') }}">
     </head>
-<body>
     <body>
-      @include('sweetalert::alert')
+        @include('sweetalert::alert')
         <div id="page-container">
             <main id="main-container">
                 <div class="hero-static d-flex align-items-center">
@@ -56,26 +55,26 @@
                                                         <input type="text" class="form-control form-control-lg form-control-alt" id="campus_name" name="campus_name" placeholder="Contoh: Universitas Teknologi Mulia" required>
                                                     </div>
                                                     <div class="mb-4">
-                                                      <label class="form-label" for="jenis_pts">Jenis Perguruan Tinggi (PT)</label>
-                                                      <select class="form-select form-control-lg form-control-alt" id="jenis_pts" name="jenis_pts" required>
-                                                          <option value="" disabled selected>Pilih Jenis PT</option>
-                                                          <option value="Universitas">Universitas</option>
-                                                          <option value="Institut">Institut</option>
-                                                          <option value="Sekolah Tinggi">Sekolah Tinggi</option>
-                                                          <option value="Politeknik">Politeknik</option>
-                                                          <option value="Akademi">Akademi</option>
-                                                          <option value="Akademi Komunitas">Akademi Komunitas</option>
-                                                          <option value="Lainnya">Lainnya</option>
-                                                      </select>
-                                                  </div>
-                                                  <div class="mb-4">
-                                                    <label class="form-label" for="campus_name">Kode Universitas</label>
-                                                    <input type="text" class="form-control form-control-lg form-control-alt" id="campus_code" name="campus_code" placeholder="Contoh: 1234" required>
-                                                </div>
-                                                <div class="mb-4">
-                                                  <label class="form-label" for="campus_name">Tahun Lahir Perguruan Tinggi</label>
-                                                  <input type="text" class="form-control form-control-lg form-control-alt" id="campus_year" name="campus_year" placeholder="Contoh: 2025" required>
-                                              </div>
+                                                        <label class="form-label" for="jenis_pts">Jenis Perguruan Tinggi (PT)</label>
+                                                        <select class="form-select form-control-lg form-control-alt" id="jenis_pts" name="jenis_pts" required>
+                                                            <option value="" disabled selected>Pilih Jenis PT</option>
+                                                            <option value="Universitas">Universitas</option>
+                                                            <option value="Institut">Institut</option>
+                                                            <option value="Sekolah Tinggi">Sekolah Tinggi</option>
+                                                            <option value="Politeknik">Politeknik</option>
+                                                            <option value="Akademi">Akademi</option>
+                                                            <option value="Akademi Komunitas">Akademi Komunitas</option>
+                                                            <option value="Lainnya">Lainnya</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label" for="campus_name">Kode Universitas</label>
+                                                        <input type="text" class="form-control form-control-lg form-control-alt" id="campus_code" name="campus_code" placeholder="Contoh: 1234" required>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label" for="campus_name">Tahun Lahir Perguruan Tinggi</label>
+                                                        <input type="text" class="form-control form-control-lg form-control-alt" id="campus_year" name="campus_year" placeholder="Contoh: 2025" required>
+                                                    </div>
                                                 </div>
                                                 
                                                 {{-- KOLOM 2: AKUN ADMIN UNIVERSITAS & YAYASAN --}}

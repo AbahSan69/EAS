@@ -1,67 +1,65 @@
 @extends('layouts.main')
-
 @section('content')
-@include('layouts.topbar')
+    @include('layouts.topbar')
+    <style>
+        .image-preview {
+            position: relative;
+            display: inline-block;
+            cursor: zoom-in;
+        }
 
-<style>
-.image-preview {
-    position: relative;
-    display: inline-block;
-    cursor: zoom-in;
-}
+        .image-preview .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-bottom-left-radius: .25rem;
+            border-bottom-right-radius: .25rem;
+        }
 
-.image-preview .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    text-align: center;
-    padding: 5px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-bottom-left-radius: .25rem;
-    border-bottom-right-radius: .25rem;
-}
+        .image-preview:hover .overlay {
+            opacity: 1;
+        }
+    </style>
 
-.image-preview:hover .overlay {
-    opacity: 1;
-}
-</style>
-
-<main id="main-container" class="flex-grow-1">
-    <div class="bg-body-extra-light">
-        <div class="content content-boxed py-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-alt">
-                    <li class="breadcrumb-item">
-                        <a class="link-fx" href="{{ route('yayasan.dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="breadcrumb-item" aria-current="page">
-                        {{ $component->name ?? 'Stakeholder' }}
-                    </li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
-    <div class="content">
-        {{-- 🔍 Form Pencarian --}}
-        <form action="{{ route('yayasan.ea.component_show', $component->id) }}" method="GET">
-            <div class="input-group mb-4">
-                <input type="text" class="form-control" name="search" placeholder="Cari Stakeholder..." value="{{ request()->input('search') }}">
-                <button class="input-group-text btn btn-primary" type="submit">
-                    <i class="fa fa-fw fa-search"></i>
-                </button>
+    <main id="main-container" class="flex-grow-1">
+        <div class="bg-body-extra-light">
+            <div class="content content-boxed py-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-alt">
+                        <li class="breadcrumb-item">
+                            <a class="link-fx" href="{{ route('yayasan.dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item" aria-current="page">
+                            {{ $component->name ?? 'Stakeholder' }}
+                        </li>
+                    </ol>
+                </nav>
             </div>
-        </form>
+        </div>
 
-        <div class="block block-rounded">
-            <div class="block-header block-header-default">
-                <h3 class="block-title">List Stakeholder {{ $component->name }}</h3>
-                <div class="block-options">
+        <div class="content">
+            {{-- 🔍 Form Pencarian --}}
+            <form action="{{ route('yayasan.ea.component_show', $component->id) }}" method="GET">
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" name="search" placeholder="Cari Stakeholder..." value="{{ request()->input('search') }}">
+                    <button class="input-group-text btn btn-primary" type="submit">
+                        <i class="fa fa-fw fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="block block-rounded">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">List Stakeholder {{ $component->name }}</h3>
+                    <div class="block-options">
                 </div>
             </div>
 
@@ -103,9 +101,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection

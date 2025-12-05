@@ -6,7 +6,6 @@ use App\Http\Controllers\DashboardController as GlobalDashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\AccountController as AdminAccountController;
 use App\Http\Controllers\Admin\EnterpriseArchitectureController as AdminEnterpriseArchitectureController;
-use App\Http\Controllers\Admin\EA\VisionController as AdminEAVisionController;
 use App\Http\Controllers\Admin\ProgressMonitoringController as AdminProgressMonitoringController;
 
 use App\Http\Controllers\Admin\EA\DomainController as AdminEADomainController;
@@ -17,18 +16,13 @@ use App\Http\Controllers\Admin\EA\ProgressController as AdminEAProgressControlle
 use App\Http\Controllers\Admin\EA\ContentController as AdminEAContentController;
 
 //Stakeholder PTS Controller
-use App\Http\Controllers\StakeholderPTS\DashboardController as StakeholderPTSDashboardController;
 use App\Http\Controllers\StakeholderPTS\HomeController as StakeholderPTSHomeController;
 use App\Http\Controllers\StakeholderPTS\EA\ContentController as StakeholderPTSContentController;
-use App\Http\Controllers\StakeholderPTS\EnterpriseArchitectureController as StakeholderPTSEnterpriseArchitectureController;
-use App\Http\Controllers\StakeholderPTS\ProgressMonitoringController as StakeholderPTSProgressMonitoringController;
 
 //Yayasan
 use App\Http\Controllers\Yayasan\DashboardController as YayasanDashboardController;
 use App\Http\Controllers\Yayasan\EA\ContentController as YayasanContentController;
 
-use App\Http\Controllers\Yayasan\ProgressMonitoringController as YayasanProgressMonitoringController;
-use App\Http\Controllers\EA\VisionController;
 use App\Http\Controllers\PerguruanTinggiController;
 use App\Http\Controllers\HomeController;
 
@@ -128,17 +122,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('stakeholder_destroy/{id}', [StakeholderPTSContentController::class, 'destroyStakeholder'])->name('stakeholder_destroy');
             Route::get('/getComments/{id}', [StakeholderPTSContentController::class, 'getComments'])
             ->name('getComments');
-            Route::get('/create', [StakeholderPTSEnterpriseArchitectureController::class, 'create'])->name('create');
-            Route::post('/store_pts', [StakeholderPTSEnterpriseArchitectureController::class, 'store_pts'])->name('store_pts');
-            Route::get('/index/{id}', [StakeholderPTSEnterpriseArchitectureController::class, 'index'])->name('index');
             Route::get('/component_gaps/{id}', [StakeholderPTSContentController::class, 'gaps'])->name('gaps');
+            Route::post('/comments/read/', [StakeholderPTSContentController::class, 'updateReadStatus'])->name('comment_read');
             
-        });
-
-        Route::prefix('progress')->name('progress.')->group(function () {
-            Route::get('/load', [StakeholderPTSProgressMonitoringController::class, 'load'])->name('load');
-            Route::post('/load_pts', [StakeholderPTSProgressMonitoringController::class, 'load_pts'])->name('load_pts');
-            Route::get('/index/{id}', [StakeholderPTSProgressMonitoringController::class, 'index'])->name('index');
         });
     });
 
@@ -149,13 +135,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/content/{id}', [YayasanContentController::class, 'index'])->name('content');
             Route::get('/component_show/{id}', [YayasanContentController::class, 'component_detail'])->name('component_show');
             Route::get('/stakeholder_show/{id}', [YayasanContentController::class, 'stakeholder_detail'])->name('stakeholder_show');
-            Route::get('/getComments/{id}', [YayasanContentController::class, 'getComments'])
-            ->name('getComments');
+            Route::get('/getComments/{id}', [YayasanContentController::class, 'getComments'])->name('getComments');
             Route::post('/saveComments', [YayasanContentController::class, 'saveComment'])->name('saveComments');
+            Route::post('/comments/read/', [YayasanContentController::class, 'updateReadStatus'])->name('comment_read');
         });
-        Route::get('/load', [YayasanProgressMonitoringController::class, 'load'])->name('load');
-        Route::post('/load_pts', [YayasanProgressMonitoringController::class, 'load_pts'])->name('load_pts');
-        Route::get('/index/{id}', [YayasanProgressMonitoringController::class, 'index'])->name('index');
 
     });
 

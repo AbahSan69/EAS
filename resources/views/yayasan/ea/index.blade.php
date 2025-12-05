@@ -1,52 +1,50 @@
 @extends('layouts.main')
 <style>
-.component-card {
-    border: 1px solid #e5e7eb;
-    transition: all 0.25s ease-in-out;
-}
-.component-card:hover {
-    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    transform: translateY(-4px);
-}
-.progress {
-    background-color: #f5f6f7;
-    border-radius: 6px;
-}
-.progress-bar.bg-warning { background-color: #fbc02d !important; }
-.progress-bar.bg-success { background-color: #28a745 !important; }
-.badge.bg-primary { background-color: #3b82f6 !important; }
-hr { margin-top: 1rem; margin-bottom: 2rem; }
-.btn-disabled {
-    pointer-events: none;
-    opacity: 0.6;
-}
+    .component-card {
+        border: 1px solid #e5e7eb;
+        transition: all 0.25s ease-in-out;
+    }
+    .component-card:hover {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        transform: translateY(-4px);
+    }
+    .progress {
+        background-color: #f5f6f7;
+        border-radius: 6px;
+    }
+    .progress-bar.bg-warning { background-color: #fbc02d !important; }
+    .progress-bar.bg-success { background-color: #28a745 !important; }
+    .badge.bg-primary { background-color: #3b82f6 !important; }
+    hr { margin-top: 1rem; margin-bottom: 2rem; }
+    .btn-disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
 </style>
-
 @section('content')
-@include('layouts.topbar')
-
-<main id="main-container" class="flex-grow-1">
-    <div class="bg-body-extra-light">
-        <div class="content content-boxed py-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-alt">
-                    <li class="breadcrumb-item">
-                        <a class="link-fx" href="{{ route('yayasan.dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        {{ $subdomain->name }}
-                    </li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
-    <div class="content">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <h4 class="fw-bold">{{ $subdomain->name }}</h4>
-                <p class="text-muted mb-0">Daftar komponen pada subdomain ini</p>
+    @include('layouts.topbar')
+    <main id="main-container" class="flex-grow-1">
+        <div class="bg-body-extra-light">
+            <div class="content content-boxed py-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-alt">
+                        <li class="breadcrumb-item">
+                            <a class="link-fx" href="{{ route('yayasan.dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $subdomain->name }}
+                        </li>
+                    </ol>
+                </nav>
             </div>
+        </div>
+
+        <div class="content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="fw-bold">{{ $subdomain->name }}</h4>
+                    <p class="text-muted mb-0">Daftar komponen pada subdomain ini</p>
+                </div>
             <div>
                 <span class="badge bg-primary fs-6">Progress: {{ $progress }}%</span>
             </div>
@@ -116,9 +114,7 @@ hr { margin-top: 1rem; margin-bottom: 2rem; }
                 <p class="text-center text-danger fw-semibold fs-sm">Belum Ada Konten Subdomain.</p>
             @endif
         </div>
-    </div>
-</main>
+    </main>
 @endsection
-
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

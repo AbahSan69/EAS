@@ -1,57 +1,56 @@
 @extends('layouts.main')
 @section('content')
-@include('layouts.topbar')
-<main id="main-container" class="flex-grow-1">
-    <div class="bg-body-extra-light">
-        <div class="content content-boxed py-3">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb breadcrumb-alt">
-              <li class="breadcrumb-item">
-                <a class="link-fx" href="{{ route('sp.dashboard') }}">Dashboard</a>
-              </li>
-              <li class="breadcrumb-item">
-                EAS - {{ $pts->nama }}
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-
-    <div class="content">
-        <div class="block block-rounded">
-            <div class="block-header block-header-default">
-                <h3 class="block-title">Architecture Vision</h3>
+    @include('layouts.topbar')
+    <main id="main-container" class="flex-grow-1">
+        <div class="bg-body-extra-light">
+            <div class="content content-boxed py-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-alt">
+                        <li class="breadcrumb-item">
+                            <a class="link-fx" href="{{ route('sp.dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            EAS - {{ $pts->nama }}
+                        </li>
+                    </ol>
+                </nav>
             </div>
-            <div class="block-content">
-    
-                <div class="row g-3 mb-3">
-                    <div class="col-md-2">
-                        <a href="{{ route('yayasan.vision.visimisi.show', $pts->id) }}" 
-                            class="text-decoration-none">
-                            <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
-                                <h6 class="fw-bold mb-1 text-dark">Visi & Misi</h6>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2">
-                        <a href="{{ route('yayasan.vision.principle.show', $pts->id) }}" 
-                            class="text-decoration-none">
-                            <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
-                                <h6 class="fw-bold mb-1 text-dark">Principles</h6>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-2">
-                        <a href="{{ route('yayasan.vision.bisnis.show', $pts->id) }}" 
-                            class="text-decoration-none">
-                            <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
-                                <h6 class="fw-bold mb-1 text-dark">Bisnis Strategi</h6>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{{ route('yayasan.vision.objective_driver.show', $pts->id) }}" 
-                            class="text-decoration-none">
+        </div>
+
+        <div class="content">
+            <div class="block block-rounded">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Architecture Vision</h3>
+                </div>
+                <div class="block-content">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-2">
+                            <a href="{{ route('yayasan.vision.visimisi.show', $pts->id) }}" 
+                                class="text-decoration-none">
+                                <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
+                                    <h6 class="fw-bold mb-1 text-dark">Visi & Misi</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="{{ route('yayasan.vision.principle.show', $pts->id) }}" 
+                                class="text-decoration-none">
+                                <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
+                                    <h6 class="fw-bold mb-1 text-dark">Principles</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="{{ route('yayasan.vision.bisnis.show', $pts->id) }}" 
+                                class="text-decoration-none">
+                                <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
+                                    <h6 class="fw-bold mb-1 text-dark">Bisnis Strategi</h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ route('yayasan.vision.objective_driver.show', $pts->id) }}" 
+                                class="text-decoration-none">
                             <div class="block block-rounded text-center p-3 bg-body-light hover-shadow">
                                 <h6 class="fw-bold mb-1 text-dark">Objective & Drivers</h6>
                             </div>

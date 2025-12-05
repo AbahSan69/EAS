@@ -12,117 +12,6 @@ use App\Services\ProgressService;
 
 class HomeController extends Controller
 {
-//     public function index()
-// {
-//     $user = Auth::user();
-//     $userUniversityId = $user->detail_role->university_id;
-
-//     // Ambil semua domain + relasi (sama seperti sebelumnya)
-//     $domains = Domain::with([
-//         'subdomain' => function ($query) use ($userUniversityId) {
-//             $query->with([
-//                 'component' => function ($q) use ($userUniversityId) {
-//                     $q->with([
-//                         'details' => function ($qq) use ($userUniversityId) {
-//                             $qq->where('university_id', $userUniversityId)
-//                                ->with('contents');
-//                         }
-//                     ]);
-//                 }
-//             ]);
-//         }
-//     ])->get();
-
-//     // Ambil izin user untuk view (TIDAK mempengaruhi perhitungan progress)
-//     $userPermissions = UserPermission::where('user_id', $user->id)
-//         ->pluck('component_id')
-//         ->toArray();
-
-//     if (empty($userPermissions)) {
-//         $userPermissions = Component::pluck('id')->toArray();
-//     }
-
-//     // 🔥 Perhitungan progress disamakan 100% dengan Method 1
-//     foreach ($domains as $domain) {
-//         $subdomainProgressValues = [];
-
-//         foreach ($domain->subdomain as $subdomain) {
-
-//             $totalProgress = 0;
-//             $componentCount = $subdomain->component->count();
-
-//             foreach ($subdomain->component as $component) {
-
-//                 $details = $component->details;
-
-//                 if ($details->isNotEmpty()) {
-
-//                     $detailProgressSum = 0;
-//                     $detailCount = 0;
-
-//                     foreach ($details as $detail) {
-
-//                         $latestContent = $detail->contents
-//                             ->sortByDesc('created_at')
-//                             ->first();
-
-//                         if ($latestContent) {
-//                             if ($latestContent->status === 'Selesai') {
-//                                 $detailProgress = 100;
-//                             } elseif ($latestContent->status === 'Proses') {
-//                                 $detailProgress = 50;
-//                             } else {
-//                                 $detailProgress = 0;
-//                             }
-//                         } else {
-//                             $detailProgress = 0;
-//                         }
-
-//                         $detailProgressSum += $detailProgress;
-//                         $detailCount++;
-//                     }
-
-//                     // Rata-rata progress di level DETAIL (persis method 1)
-//                     $component->progress = $detailCount > 0
-//                         ? round($detailProgressSum / $detailCount, 2)
-//                         : 0;
-
-//                 } else {
-
-//                     // Komponen tanpa detail = 0 (persis method 1)
-//                     $component->progress = 0;
-
-//                 }
-
-//                 // Tambah progress komponen ke total
-//                 $totalProgress += $component->progress;
-//             }
-
-//             // Rata-rata komponen di subdomain (persis method 1)
-//             $subdomainProgress = $componentCount > 0
-//                 ? round($totalProgress / $componentCount, 2)
-//                 : 0;
-
-//             // Set hasil
-//             $subdomain->setAttribute('progress', $subdomainProgress);
-//             $subdomainProgressValues[] = $subdomainProgress;
-//         }
-
-//         // Rata-rata seluruh subdomain di domain itu
-//         $domain->setAttribute('progress',
-//             count($subdomainProgressValues) > 0
-//                 ? round(array_sum($subdomainProgressValues) / count($subdomainProgressValues), 2)
-//                 : 0
-//         );
-//     }
-
-//     // Rata-rata seluruh domain
-//     $overallProgress = $domains->count() > 0
-//         ? round($domains->avg('progress'), 2)
-//         : 0;
-
-//     return view('stakeholder_pts.home', compact('domains', 'overallProgress', 'userPermissions'));
-// }
     public function index()
     {
         $user = Auth::user();
@@ -147,8 +36,8 @@ class HomeController extends Controller
 
         // Ambil izin user untuk view
         $userPermissions = UserPermission::where('user_id', $user->id)
-            ->pluck('component_id')
-            ->toArray();
+                            ->pluck('component_id')
+                            ->toArray();
 
         if (empty($userPermissions)) {
             $userPermissions = Component::pluck('id')->toArray();
@@ -260,10 +149,10 @@ class HomeController extends Controller
         // --- AKHIR PERHITUNGAN MANUAL AKURAT ---
 
         // Tampilkan hasil perhitungan menggunakan dd()
-    //    dd($progressReport);
-    return view('stakeholder_pts.home', [
-        'progressReport' => $progressReport
-    ]);
+        //    dd($progressReport);
+        return view('stakeholder_pts.home', [
+            'progressReport' => $progressReport
+        ]);
     
     }
 

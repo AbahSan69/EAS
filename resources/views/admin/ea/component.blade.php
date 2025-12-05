@@ -52,7 +52,6 @@
                             No
                           </th>
                           <th>Nama Component</th>
-                          <th>Lihat</th>
                           <th class="text-center" style="width: 100px;">Aksi</th>
                         </tr>
                       </thead>
@@ -69,12 +68,6 @@
                             <td class="fw-semibold fs-sm">
                                 {{ $list_component->name }}
                               </td>
-                            <td class="fw-semibold fs-sm">
-                                <a type="button" class="btn btn-sm btn-alt-primary js-bs-tooltip-enabled me-2" title="Lihat" href="">
-                                    <i class="fa fa-fw fa-eye"></i>
-                                    <span>Lihat</span>
-                                </a>
-                            </td>
                             <td class="text-center">
                               <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-alt-warning js-bs-tooltip-enabled me-2" title="Edit" data-bs-toggle="modal" data-bs-target="#modal-block-vcenter-extra-large-tambah-{{ $list_component->id }}">

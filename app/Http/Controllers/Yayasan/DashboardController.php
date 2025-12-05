@@ -148,10 +148,10 @@ class DashboardController extends Controller
         // --- AKHIR PERHITUNGAN MANUAL AKURAT ---
 
         // Tampilkan hasil perhitungan menggunakan dd()
-    //    dd($progressReport);
-    return view('yayasan.dashboard', [
-        'progressReport' => $progressReport
-    ]);
+        //    dd($progressReport);
+        return view('yayasan.dashboard', [
+            'progressReport' => $progressReport
+        ]);
     
     }
 }
