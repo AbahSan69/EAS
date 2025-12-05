@@ -212,7 +212,7 @@
                                       data-subdomain="{{ $sub->id }}"
                                       data-component="{{ $comp->id }}"
                                       {{ !empty($existing) ? 'checked' : '' }}>
-                              { $comp->name }}
+                              {{  $comp->name  }}
                             </td>
                             @foreach(['lihat','create','update','delete'] as $aksi)
                               <td>
