@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\EA;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\SuBDomain;
+use App\Models\SubDomain;
 use App\Models\Component;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
