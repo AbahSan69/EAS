@@ -25,5 +25,10 @@ class ComponentContent extends Model
         // User memiliki banyak baris di tabel user_permissions
         return $this->hasMany(Comment::class, 'component_content_id', 'id');
     }
+
+    public function commentReads()
+    {
+        return $this->hasMany(CommentRead::class, 'component_content_id');
+    }
 }
 

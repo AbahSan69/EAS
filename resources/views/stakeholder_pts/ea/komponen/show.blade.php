@@ -1,7 +1,5 @@
 @extends('layouts.main')
-@section('content')
-    @include('layouts.topbar')
-    <style>
+<style>
         /* Styling CSS Image Preview*/
         .image-preview {
             position: relative;
@@ -28,8 +26,10 @@
         .image-preview:hover .overlay {
             opacity: 1;
         }
-    </style>
 
+    </style>
+@section('content')
+    @include('layouts.topbar')
     <main id="main-container" class="flex-grow-1">
         <div class="bg-body-extra-light">
             <div class="content content-boxed py-3">
@@ -321,10 +321,9 @@
                                 </button>
                             </div>
                         </div>
-  
+                        <form id="dynamic-data-form" action="" method="POST" enctype="multipart/form-data">
+                            @csrf
                         <div class="block-content fs-sm">
-                            <form id="dynamic-data-form" action="" method="POST" enctype="multipart/form-data">
-                                @csrf
                                 <input type="hidden" name="id" id="dynamic_id">
                                 <input type="hidden" name="component_id" id="dynamic_component_id" value="{{ $component->id }}">
   
