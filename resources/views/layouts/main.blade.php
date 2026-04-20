@@ -6,5 +6,8 @@
         @yield('content')
         @include('layouts.footer')
         @include('layouts.scripts')
+        <script>
+    One.helpersOnLoad(['core-bootstrap']);
+</script>
     </body>
 </html>

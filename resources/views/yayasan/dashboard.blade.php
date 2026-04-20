@@ -84,10 +84,77 @@
                                                 style="width: {{ $subProgress }}%;">
                                             </div>
                                         </div>
+                                        
                                         {{-- TOTAL REQUIRED COMPONENTS --}}
-                                        <small class="d-block text-muted mb-2">
+                                        @php
+                                            $filled = $sub['filled_components'];
+                                            $empty = $sub['empty_components'];
+                                            $subId = $sub['subdomain_id'];
+                                        @endphp
+
+                                        <small class="d-block text-muted mb-1">
                                             Total Component: {{ $sub['total_required_components'] }}
                                         </small>
+
+                                        <div id="sub-{{ $subId }}">
+    
+                                            {{-- SUMMARY --}}
+                                            <div class="d-flex justify-content-center gap-3 small mb-2">
+        
+                                                {{-- TERISI --}}
+                                                <a href="javascript:void(0)"
+                                                   data-bs-toggle="collapse"
+                                                   data-bs-target="#filled-{{ $subId }}"
+                                                   class="text-success fw-semibold">
+                                                   ✔ {{ $filled }} Terisi
+                                                </a>
+
+                                                {{-- BELUM --}}
+                                                <a href="javascript:void(0)"
+                                                   data-bs-toggle="collapse"
+                                                   data-bs-target="#empty-{{ $subId }}"
+                                                   class="text-danger fw-semibold">
+                                                   ✖ {{ $empty }} Belum
+                                                </a>
+                                            </div>
+
+                                            {{-- LIST TERISI --}}
+                                            <div id="filled-{{ $subId }}" class="collapse" data-bs-parent="#sub-{{ $subId }}">
+                                                <ul class="list-group mb-2">
+                                                    @forelse($sub['components'] as $comp)
+                                                        @if($comp['is_filled'])
+                                                            <li class="list-group-item small text-success d-flex justify-content-between">
+                                                                <span>✔ {{ $comp['component_name'] }}</span>
+                                                                <span>{{ $comp['progress'] }}%</span>
+                                                            </li>
+                                                        @endif
+                                                    @empty
+                                                        <li class="list-group-item small text-muted">
+                                                            Tidak ada data
+                                                        </li>
+                                                    @endforelse
+                                                </ul>
+                                            </div>
+
+                                            {{-- LIST BELUM --}}
+                                            <div id="empty-{{ $subId }}" class="collapse" data-bs-parent="#sub-{{ $subId }}">
+                                                <ul class="list-group mb-2">
+                                                    @forelse($sub['components'] as $comp)
+                                                        @if(!$comp['is_filled'])
+                                                            <li class="list-group-item small text-danger">
+                                                                ✖ {{ $comp['component_name'] }}
+                                                            </li>
+                                                        @endif
+                                                    @empty
+                                                        <li class="list-group-item small text-muted">
+                                                            Semua sudah terisi 🎉
+                                                        </li>
+                                                    @endforelse
+                                                </ul>
+                                            </div>
+
+                                        </div>
+
                                         {{-- BUTTON DETAIL (dummy karena tidak ada route di dd) --}}
                                         <a href="{{ $hasAccess ? route('yayasan.ea.content', $sub['subdomain_id']) : 'javascript:void(0)' }}"
                                             class="btn btn-sm mt-2 {{ $buttonClass }}"

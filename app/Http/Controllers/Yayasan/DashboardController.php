@@ -16,16 +16,15 @@ class DashboardController extends Controller
         $user = Auth::user();
         $userUniversityId = $user->detail_role->university_id;
 
-        // Ambil semua domain + relasi yang dibutuhkan
+        // Ambil domain + relasi
         $domains = Domain::with([
             'subdomain' => function ($query) use ($userUniversityId) {
                 $query->with([
                     'component' => function ($q) use ($userUniversityId) {
                         $q->with([
                             'details' => function ($qq) use ($userUniversityId) {
-                                // Filtering Detail berdasarkan university_id
                                 $qq->where('university_id', $userUniversityId)
-                                    ->with('contents'); // Memuat contents untuk cek status
+                               ->with('contents');
                             }
                         ]);
                     }
@@ -33,24 +32,17 @@ class DashboardController extends Controller
             }
         ])->get();
 
-        // Ambil izin user untuk view
-        $userPermissions = UserPermission::where('user_id', $user->id)
-            ->pluck('component_id')
-            ->toArray();
-
-        if (empty($userPermissions)) {
-            $userPermissions = Component::pluck('id')->toArray();
-        }
-
         $totalOverallProgressSum = 0;
         $totalDomainCount = $domains->count();
 
-        // Array untuk menyimpan hasil progress yang akan di-dd()
-        $progressReport = [];
+        $progressReport = [
+            'domains' => []
+        ];
 
-        // --- MULAI PERHITUNGAN MANUAL AKURAT ---
         foreach ($domains as $domain) {
+
             $subdomainProgressValues = [];
+
             $domainReport = [
                 'domain_id' => $domain->id,
                 'domain_name' => $domain->name,
@@ -59,23 +51,32 @@ class DashboardController extends Controller
             ];
 
             foreach ($domain->subdomain as $subdomain) {
+
+                // 🔥 Ambil SEMUA komponen (biar tidak miss)
+                $allComponents = Component::where('subdomain_id', $subdomain->id)->get();
+
+                // Komponen yang sudah di-load (punya detail)
+                $loadedComponents = $subdomain->component->keyBy('id');
+
+                $totalRequiredComponents = $allComponents->count();
                 $componentProgressSum = 0;
-                
-                // Ambil JUMLAH TOTAL Component yang seharusnya ada di SubDomain ini (Denominator)
-                $totalRequiredComponents = Component::where('subdomain_id', $subdomain->id)->count(); 
-                
+                $filledCount = 0;
+
                 $subdomainReport = [
                     'subdomain_id' => $subdomain->id,
                     'subdomain_name' => $subdomain->name,
                     'components' => [],
                     'calculated_progress' => 0,
-                    'total_required_components' => $totalRequiredComponents
+                    'total_required_components' => $totalRequiredComponents,
+                    'filled_components' => 0,
+                    'empty_components' => 0,
                 ];
 
-                // Iterasi melalui Component yang DIMUAT (hanya yang punya Detail terfilter)
-                foreach ($subdomain->component as $component) {
+                foreach ($allComponents as $component) {
 
-                    $details = $component->details;
+                    $loadedComponent = $loadedComponents->get($component->id);
+                    $details = $loadedComponent ? $loadedComponent->details : collect();
+
                     $detailProgressSum = 0;
                     $detailCount = 0;
                     $currentCompProgress = 0;
@@ -84,7 +85,7 @@ class DashboardController extends Controller
                         foreach ($details as $detail) {
                             $latestContent = $detail->contents->sortByDesc('created_at')->first();
                             $detailProgress = 0;
-                            
+
                             if ($latestContent) {
                                 if ($latestContent->status === 'Selesai') {
                                     $detailProgress = 100;
@@ -92,16 +93,22 @@ class DashboardController extends Controller
                                     $detailProgress = 50;
                                 }
                             }
+
                             $detailProgressSum += $detailProgress;
                             $detailCount++;
                         }
 
-                        // Rata-rata progress Component
                         $currentCompProgress = $detailCount > 0
                             ? round($detailProgressSum / $detailCount, 2)
                             : 0;
-                    } 
-                    // Jika details kosong, currentCompProgress tetap 0, seperti yang diinisialisasi di awal loop.
+                    }
+
+                    // 🔥 STATUS FILLED
+                    $isFilled = $currentCompProgress > 0;
+
+                    if ($isFilled) {
+                        $filledCount++;
+                    }
 
                     $componentProgressSum += $currentCompProgress;
 
@@ -109,49 +116,47 @@ class DashboardController extends Controller
                         'component_id' => $component->id,
                         'component_name' => $component->name,
                         'progress' => $currentCompProgress,
-                        'details_count_filtered' => $details->count(),
+                        'is_filled' => $isFilled,
                     ];
                 }
-                
-                // Hitung rata-rata SubDomain menggunakan TOTAL Component sebagai pembagi (Denominator yang benar)
+
+                // 🔥 HITUNG EMPTY
+                $emptyCount = $totalRequiredComponents - $filledCount;
+
+                // 🔥 HITUNG PROGRESS SUBDOMAIN
                 $subdomainProgress = $totalRequiredComponents > 0
                     ? round($componentProgressSum / $totalRequiredComponents, 2)
                     : 0;
 
-                // Set hasil progress pada objek SubDomain dan Report
-                $subdomain->setAttribute('progress', $subdomainProgress);
                 $subdomainReport['calculated_progress'] = $subdomainProgress;
-                
+                $subdomainReport['filled_components'] = $filledCount;
+                $subdomainReport['empty_components'] = $emptyCount;
+
                 $subdomainProgressValues[] = $subdomainProgress;
                 $domainReport['subdomains'][] = $subdomainReport;
             }
 
-            // Hitung rata-rata seluruh subdomain di domain itu
+            // 🔥 PROGRESS DOMAIN
             $domainProgress = count($subdomainProgressValues) > 0
                 ? round(array_sum($subdomainProgressValues) / count($subdomainProgressValues), 2)
                 : 0;
 
-            $domain->setAttribute('progress', $domainProgress);
             $domainReport['progress'] = $domainProgress;
             $totalOverallProgressSum += $domainProgress;
-            
+
             $progressReport['domains'][] = $domainReport;
         }
 
-        // Rata-rata seluruh domain (Overall Progress)
+        // 🔥 OVERALL
         $overallProgress = $totalDomainCount > 0
             ? round($totalOverallProgressSum / $totalDomainCount, 2)
             : 0;
-        
+
         $progressReport['overall_progress'] = $overallProgress;
         $progressReport['total_domain_count'] = $totalDomainCount;
-        // --- AKHIR PERHITUNGAN MANUAL AKURAT ---
 
-        // Tampilkan hasil perhitungan menggunakan dd()
-        //    dd($progressReport);
         return view('yayasan.dashboard', [
             'progressReport' => $progressReport
         ]);
-    
     }
 }

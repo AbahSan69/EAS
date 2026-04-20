@@ -12,6 +12,8 @@
     </div>
     @endguest
     @auth
+
+    @if(Auth::user()->detail_role->role->name !== 'Yayasan')
 <div class="d-flex align-items-center">
 
     {{-- 🔔 NOTIFICATION COMMENT --}}
@@ -73,7 +75,7 @@
         </div>
     </div>
 </div>
-
+@endif
 
     {{-- 👤 USER DROPDOWN (ASLI PUNYAMU, TIDAK DIUBAH) --}}
     <div class="dropdown d-inline-block ms-2">

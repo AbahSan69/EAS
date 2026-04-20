@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 @include('admin.layouts.head')
 <body>
   @include('sweetalert::alert')
@@ -11,5 +11,8 @@
     <script src="{{ asset('oneui/js/lib/jquery.min.js') }}"></script>
     <script src="{{ asset('oneui/js/oneui.app.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    One.helpersOnLoad(['core-bootstrap']);
+</script>
 </body>
 </html>
